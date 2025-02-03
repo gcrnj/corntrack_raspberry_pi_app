@@ -1,5 +1,6 @@
 
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/dashboard_screen.dart';
+import 'package:corntrack_raspberry_pi_app/screens/register/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,7 +18,7 @@ final GoRouter _appRouter = GoRouter(
       //   return null; // Stay on the welcome page if not authenticated
       // },
       builder: (BuildContext context, GoRouterState state) {
-        return const DashboardScreen();
+        return const RegisterScreen();
       },
       // routes: <RouteBase>[
       //   GoRoute(
@@ -28,13 +29,13 @@ final GoRouter _appRouter = GoRouter(
       //   ),
       // ],
     ),
-    // GoRoute(
-    //   path: '/home',
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return const HomeNavigation();
-    //   },
-    //
-    // ),
+    GoRoute(
+      path: '/dashboard',
+      builder: (BuildContext context, GoRouterState state) {
+        return const DashboardScreen();
+      },
+
+    ),
   ],
 );
 

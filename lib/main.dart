@@ -1,9 +1,12 @@
 import 'package:corntrack_raspberry_pi_app/app_router.dart';
+import 'package:corntrack_raspberry_pi_app/services/devices_services.dart';
 import 'package:corntrack_utils/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
   runApp(ProviderScope(child: const MyApp()));
 }
 
@@ -13,6 +16,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    DevicesServices().test();
     return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(

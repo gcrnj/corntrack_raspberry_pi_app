@@ -1,37 +1,46 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 import 'base.dart';
 
-class DevicesServices extends ServicesBase{
+class DevicesServices extends ServicesBase {
+  final defaultDeviceName = 'Corn Track';
 
-  // void writeToFirestore(String collection, Map<String, dynamic> data) async {
-  //   // Firebase Firestore endpoint URL
-  //   final String url = '$baseUrl$collection';
-  //
-  //   // The data to be sent as a request body
-  //   final Map<String, dynamic> body = {
-  //     'fields': data.map((key, value) {
-  //       return MapEntry(key, {'stringValue': value.toString()});
-  //     }),
-  //   };
-  //
-  //   // Sending POST request to Firestore
-  //   final response = await http.post(
-  //     Uri.parse(url),
-  //     headers: {
-  //       'Authorization': 'Bearer YOUR_ACCESS_TOKEN', // Optional if using service account credentials
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: json.encode(body),
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     print('Document successfully written!');
-  //   } else {
-  //     print('Failed to write document: ${response.body}');
-  //   }
-  // }
+  /// Returns null if registration failed.
+  Future<String?> registerDevice() async {
+    // Firebase Firestore endpoint URL
+    final String url = '$baseUrl/devices';
 
+    // The data to be sent as a request body
+    final Map<String, dynamic> body = {
+      'fields': {
+        'deviceName': {
+          'stringValue': defaultDeviceName,
+          // assuming 'defaultDeviceName' is defined
+        }
+      },
+    };
+
+    // Sending POST request to Firestore
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json', // Important to specify content type
+      },
+      body: json.encode(body),
+    );
+
+    String? deviceId;
+    final responseBody = response.body;
+    if(responseBody.isNotEmpty) {
+      final responseJson = json.decode(responseBody);
+      deviceId = responseJson['name'].toString().substring(responseJson['name'].lastIndexOf('/') + 1);
+    }
+    // Result in json = json.decode(response.body);
+
+    return deviceId;
+  }
 
   // Working
   Future<bool> test() async {

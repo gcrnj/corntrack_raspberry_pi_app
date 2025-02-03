@@ -1,4 +1,5 @@
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/editable_name_widget.dart';
+import 'package:corntrack_raspberry_pi_app/services/moisture_reading_services.dart';
 import 'package:corntrack_raspberry_pi_app/utility/icons_paths.dart';
 import 'package:corntrack_utils/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final selectedCornPots = ref.watch(selectedCornPotProvider);
+    MoistureReadingServices()
+      ..getAll()
+      ..add({
+        'moisture': {
+          'doubleValue': 25,
+        },
+        'pot': {
+          'integerValue': 3,
+        },
+        'time': {
+          'timestampValue': DateTime.now().toUtc().toIso8601String(),
+        }
+      });
     return Scaffold(
       body: SafeArea(
         child: Padding(

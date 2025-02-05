@@ -43,8 +43,8 @@ jobs:
           cp build/linux/x64/release/bundle/corntrack_raspberry_pi_app corntrack_raspberry_pi_app/usr/local/bin/corntrack_raspberry_pi_app
 
           # Create the control file
-          cat <<EOF > corntrack_raspberry_pi_app/DEBIAN/control
-          Package: corntrack_raspberry_pi_app
+          cat <<EOF > corntrack-rpi-app/DEBIAN/control
+          Package: corntrack-rpi-app
           Version: 1.0.0
           Section: base
           Priority: optional
@@ -52,6 +52,7 @@ jobs:
           Maintainer: Your Name <your.email@example.com>
           Description: A Flutter-based desktop application for Raspberry Pi
           EOF
+
 
           # Create the desktop entry file
           cat <<EOF > corntrack_raspberry_pi_app/usr/share/applications/corntrack_raspberry_pi_app.desktop

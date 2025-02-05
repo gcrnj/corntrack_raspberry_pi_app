@@ -1,10 +1,12 @@
-name: Build Flutter .deb Package
+name: Build crntrck .deb Package
 
 on:
   push:
     branches:
-      - test2
+      - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -22,44 +24,38 @@ jobs:
       - name: Enable Linux Desktop Support
         run: |
           sudo apt update
-          sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev qemu-user-static -y
+          sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev binfmt-support -y
           flutter config --enable-linux-desktop
 
-      - name: Set Up Cross-compilation Environment for ARM64 (aarch64)
+      - name: Build Flutter for Linux
+        run: flutter build linux
+
+      - name: List build output (Debug)
+        run: ls -l build/linux/x64/release/bundle
+
+      - name: Prepare DEB Package Structure
         run: |
-          # Install necessary ARM64 cross-compilation dependencies
-          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          mkdir -p corntrackrpi/DEBIAN
+          mkdir -p corntrackrpi/usr/local/bin
+          mkdir -p corntrackrpi/usr/share/applications
+          mkdir -p corntrackrpi/usr/share/icons/hicolor/256x256/apps
+          
+          # Correct the typo and copy the binary to the correct location
+          cp build/linux/x64/release/bundle/corntrack_raspberry_pi_app corntrackrpi/usr/local/bin/corntrackrpi
 
-          # Set up QEMU to emulate ARM64
-          sudo update-binfmts --enable qemu-aarch64
-
-      - name: Build Flutter for ARM64 (aarch64)
-        run: |
-          # Ensure we are building the app for ARM64
-          flutter build linux --target=arm64
-
-      - name: Prepare DEB Package Structure for ARM64
-        run: |
-          rm -rf corntrackrpi_rpi
-
-          mkdir -p corntrackrpi_rpi/DEBIAN
-          mkdir -p corntrackrpi_rpi/usr/local/bin
-          mkdir -p corntrackrpi_rpi/usr/share/applications
-          mkdir -p corntrackrpi_rpi/usr/share/icons/hicolor/256x256/apps
-
-          cp build/linux/arm64/release/bundle/corntrack_raspberry_pi_app corntrackrpi_rpi/usr/local/bin/corntrackrpi
-
-          cat <<EOF > corntrackrpi_rpi/DEBIAN/control
+          # Create the control file
+          cat <<EOF > corntrackrpi/DEBIAN/control
           Package: corntrackrpi
           Version: 1.0.0
           Section: base
           Priority: optional
-          Architecture: arm64
+          Architecture: amd64
           Maintainer: Your Name <your.email@example.com>
-          Description: A Flutter-based desktop application for Raspberry Pi (ARM64)
+          Description: A Flutter-based desktop application for Raspberry Pi
           EOF
 
-          cat <<EOF > corntrackrpi_rpi/usr/share/applications/corntrackrpi.desktop
+          # Create the desktop entry file
+          cat <<EOF > corntrackrpi/usr/share/applications/corntrackrpi.desktop
           [Desktop Entry]
           Name=corntrackrpi
           Comment=Raspberry Pi Flutter Desktop App
@@ -70,13 +66,13 @@ jobs:
           Categories=Utility;
           EOF
 
-          chmod +x corntrackrpi_rpi/usr/local/bin/corntrackrpi
+          chmod +x corntrackrpi/usr/local/bin/corntrackrpi
 
-      - name: Build the .deb Package for ARM64 (Raspberry Pi)
-        run: dpkg-deb --build corntrackrpi_rpi
+      - name: Build the .deb Package
+        run: dpkg-deb --build corntrackrpi
 
       - name: Upload DEB Package as an Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: corntrackrpi_arm64
-          path: corntrackrpi_rpi.deb
+          name: corntrackrpi-deb
+          path: corntrackrpi.deb

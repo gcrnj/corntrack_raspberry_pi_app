@@ -68,9 +68,8 @@ jobs:
           # Set proper permissions for the binary
           chmod +x corntrack_raspberry_pi_app/usr/local/bin/corntrack_raspberry_pi_app
 
-
       - name: Build the .deb Package
-        run: dpkg-deb --build corntrack_raspberry_pi_app
+        run: dpkg-deb --build corntrack-rpi-app
 
       - name: Upload DEB Package as an Artifact
         uses: actions/upload-artifact@v4

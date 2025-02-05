@@ -31,6 +31,7 @@ jobs:
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
           # Set up QEMU to emulate ARM64
+          sudo apt-get install -y qemu-user-static
           sudo update-binfmts --enable qemu-aarch64
 
       - name: Build Flutter for ARM64 (aarch64)
@@ -38,17 +39,24 @@ jobs:
           # Ensure we are building the app for ARM64
           flutter build linux --target=arm64
 
+      - name: List build output (ARM64 Debug)
+        run: ls -l build/linux/arm64/release/bundle
+
       - name: Prepare DEB Package Structure for ARM64
         run: |
+          # Remove previous package structure
           rm -rf corntrackrpi_rpi
 
+          # Create necessary directories for the .deb package
           mkdir -p corntrackrpi_rpi/DEBIAN
           mkdir -p corntrackrpi_rpi/usr/local/bin
           mkdir -p corntrackrpi_rpi/usr/share/applications
           mkdir -p corntrackrpi_rpi/usr/share/icons/hicolor/256x256/apps
 
+          # Copy the binary to the correct location in the DEB package
           cp build/linux/arm64/release/bundle/corntrack_raspberry_pi_app corntrackrpi_rpi/usr/local/bin/corntrackrpi
 
+          # Create control file for DEB package
           cat <<EOF > corntrackrpi_rpi/DEBIAN/control
           Package: corntrackrpi
           Version: 1.0.0
@@ -59,6 +67,7 @@ jobs:
           Description: A Flutter-based desktop application for Raspberry Pi (ARM64)
           EOF
 
+          # Create desktop entry file for the application
           cat <<EOF > corntrackrpi_rpi/usr/share/applications/corntrackrpi.desktop
           [Desktop Entry]
           Name=corntrackrpi
@@ -70,6 +79,7 @@ jobs:
           Categories=Utility;
           EOF
 
+          # Make the binary executable
           chmod +x corntrackrpi_rpi/usr/local/bin/corntrackrpi
 
       - name: Build the .deb Package for ARM64 (Raspberry Pi)

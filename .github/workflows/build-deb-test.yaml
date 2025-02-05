@@ -30,9 +30,14 @@ jobs:
           # Install necessary ARM64 cross-compilation dependencies
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
-          # Set up QEMU to emulate ARM64
+          # Install QEMU to support ARM64 emulation
           sudo apt-get install -y qemu-user-static
+
+          # Register ARM64 binary format with update-binfmts
           sudo update-binfmts --enable qemu-aarch64
+
+          # Verify the setup by listing the registered formats
+          update-binfmts --display
 
       - name: Build Flutter for ARM64 (aarch64)
         run: |

@@ -28,28 +28,62 @@ jobs:
       - name: Build Flutter for Linux
         run: flutter build linux
 
-      - name: Prepare DEB Package Structure
+      - name: Prepare DEB Package Structure for Ubuntu
         run: |
-          rm -rf corntrackrpi
+          rm -rf corntrackrpi_ubuntu
 
-          mkdir -p corntrackrpi/DEBIAN
-          mkdir -p corntrackrpi/usr/local/bin
-          mkdir -p corntrackrpi/usr/share/applications
-          mkdir -p corntrackrpi/usr/share/icons/hicolor/256x256/apps
+          mkdir -p corntrackrpi_ubuntu/DEBIAN
+          mkdir -p corntrackrpi_ubuntu/usr/local/bin
+          mkdir -p corntrackrpi_ubuntu/usr/share/applications
+          mkdir -p corntrackrpi_ubuntu/usr/share/icons/hicolor/256x256/apps
 
-          cp build/linux/x64/release/bundle/corntrack_raspberry_pi_app corntrackrpi/usr/local/bin/corntrackrpi
+          cp build/linux/x64/release/bundle/corntrack_raspberry_pi_app corntrackrpi_ubuntu/usr/local/bin/corntrackrpi
 
-          cat <<EOF > corntrackrpi/DEBIAN/control
+          cat <<EOF > corntrackrpi_ubuntu/DEBIAN/control
           Package: corntrackrpi
           Version: 1.0.0
           Section: base
           Priority: optional
           Architecture: amd64
           Maintainer: Your Name <your.email@example.com>
+          Description: A Flutter-based desktop application for Ubuntu
+          EOF
+
+          cat <<EOF > corntrackrpi_ubuntu/usr/share/applications/corntrackrpi.desktop
+          [Desktop Entry]
+          Name=corntrackrpi
+          Comment=Ubuntu Flutter Desktop App
+          Exec=/usr/local/bin/corntrackrpi
+          Icon=/usr/share/icons/hicolor/256x256/apps/corntrackrpi.png
+          Terminal=false
+          Type=Application
+          Categories=Utility;
+          EOF
+
+          chmod +x corntrackrpi_ubuntu/usr/local/bin/corntrackrpi
+
+      - name: Prepare DEB Package Structure for Raspberry Pi
+        run: |
+          rm -rf corntrackrpi_rpi
+
+          mkdir -p corntrackrpi_rpi/DEBIAN
+          mkdir -p corntrackrpi_rpi/usr/local/bin
+          mkdir -p corntrackrpi_rpi/usr/share/applications
+          mkdir -p corntrackrpi_rpi/usr/share/icons/hicolor/256x256/apps
+
+          cp build/linux/arm64/release/bundle/corntrack_raspberry_pi_app corntrackrpi_rpi/usr/local/bin/corntrackrpi
+
+          cat <<EOF > corntrackrpi_rpi/DEBIAN/control
+          Package: corntrackrpi
+          Version: 1.0.0
+          Section: base
+          Priority: optional
+          Architecture: arm64
+          Maintainer: Your Name <your.email@example.com>
           Description: A Flutter-based desktop application for Raspberry Pi
           EOF
 
-          cat <<EOF > corntrackrpi/usr/share/applications/corntrackrpi.desktop
+          cat <<EOF > corntrackrpi_rpi/usr/share/applications/corntrackrpi.desktop
           [Desktop Entry]
           Name=corntrackrpi
           Comment=Raspberry Pi Flutter Desktop App
@@ -60,13 +94,18 @@ jobs:
           Categories=Utility;
           EOF
 
-          chmod +x corntrackrpi/usr/local/bin/corntrackrpi
+          chmod +x corntrackrpi_rpi/usr/local/bin/corntrackrpi
 
-      - name: Build the .deb Package
-        run: dpkg-deb --build corntrackrpi
+      - name: Build the .deb Package for Ubuntu
+        run: dpkg-deb --build corntrackrpi_ubuntu
 
-      - name: Upload DEB Package as an Artifact
+      - name: Build the .deb Package for Raspberry Pi
+        run: dpkg-deb --build corntrackrpi_rpi
+
+      - name: Upload DEB Packages as Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: myapp-deb
-          path: corntrackrpi.deb
+          name: myapp-debs
+          path: |
+            corntrackrpi_ubuntu.deb
+            corntrackrpi_rpi.deb

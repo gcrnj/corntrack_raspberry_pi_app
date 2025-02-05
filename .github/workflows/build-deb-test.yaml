@@ -30,21 +30,17 @@ jobs:
 
       - name: Prepare DEB Package Structure
         run: |
-          # Ensure the target directory doesn't exist already
           rm -rf corntrack_raspberry_pi_app
 
-          # Create the necessary directories
           mkdir -p corntrack_raspberry_pi_app/DEBIAN
           mkdir -p corntrack_raspberry_pi_app/usr/local/bin
           mkdir -p corntrack_raspberry_pi_app/usr/share/applications
           mkdir -p corntrack_raspberry_pi_app/usr/share/icons/hicolor/256x256/apps
 
-          # Copy only the binary file (not the entire bundle)
           cp build/linux/x64/release/bundle/corntrack_raspberry_pi_app corntrack_raspberry_pi_app/usr/local/bin/corntrack_raspberry_pi_app
 
-          # Create the control file
-          cat <<EOF > corntrack-rpi-app/DEBIAN/control
-          Package: corntrack-rpi-app
+          cat <<EOF > corntrack_raspberry_pi_app/DEBIAN/control
+          Package: corntrack_raspberry_pi_app
           Version: 1.0.0
           Section: base
           Priority: optional
@@ -53,8 +49,6 @@ jobs:
           Description: A Flutter-based desktop application for Raspberry Pi
           EOF
 
-
-          # Create the desktop entry file
           cat <<EOF > corntrack_raspberry_pi_app/usr/share/applications/corntrack_raspberry_pi_app.desktop
           [Desktop Entry]
           Name=corntrack_raspberry_pi_app
@@ -66,7 +60,6 @@ jobs:
           Categories=Utility;
           EOF
 
-          # Set proper permissions for the binary
           chmod +x corntrack_raspberry_pi_app/usr/local/bin/corntrack_raspberry_pi_app
 
       - name: Build the .deb Package

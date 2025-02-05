@@ -30,36 +30,44 @@ jobs:
 
       - name: Prepare DEB Package Structure
         run: |
+          # Ensure the target directory doesn't exist already
+          rm -rf corntrack_raspberry_pi_app
+
+          # Create the necessary directories
           mkdir -p corntrack_raspberry_pi_app/DEBIAN
           mkdir -p corntrack_raspberry_pi_app/usr/local/bin
           mkdir -p corntrack_raspberry_pi_app/usr/share/applications
           mkdir -p corntrack_raspberry_pi_app/usr/share/icons/hicolor/256x256/apps
 
-          cp -r build/linux/x64/release/bundle corntrack_raspberry_pi_app/usr/local/bin/myapp
+          # Copy only the binary file (not the entire bundle)
+          cp build/linux/x64/release/bundle/corntrack_raspberry_pi_app corntrack_raspberry_pi_app/usr/local/bin/corntrack_raspberry_pi_app
 
+          # Create the control file
           cat <<EOF > corntrack_raspberry_pi_app/DEBIAN/control
-          Package: myapp
+          Package: corntrack_raspberry_pi_app
           Version: 1.0.0
           Section: base
           Priority: optional
           Architecture: amd64
           Maintainer: Your Name <your.email@example.com>
-          Description: A Flutter-based desktop application
+          Description: A Flutter-based desktop application for Raspberry Pi
           EOF
 
-          cat <<EOF > corntrack_raspberry_pi_app/usr/share/applications/myapp.desktop
+          # Create the desktop entry file
+          cat <<EOF > corntrack_raspberry_pi_app/usr/share/applications/corntrack_raspberry_pi_app.desktop
           [Desktop Entry]
-          Name=MyApp
-          Comment=My Flutter Desktop App
-          Exec=/usr/local/bin/myapp/myapp
-          Icon=/usr/share/icons/hicolor/256x256/apps/myapp.png
+          Name=corntrack_raspberry_pi_app
+          Comment=Raspberry Pi Flutter Desktop App
+          Exec=/usr/local/bin/corntrack_raspberry_pi_app
+          Icon=/usr/share/icons/hicolor/256x256/apps/corntrack_raspberry_pi_app.png
           Terminal=false
           Type=Application
           Categories=Utility;
           EOF
 
-          chmod 755 corntrack_raspberry_pi_app/DEBIAN
-          chmod 755 corntrack_raspberry_pi_app/usr/local/bin/myapp/myapp
+          # Set proper permissions for the binary
+          chmod +x corntrack_raspberry_pi_app/usr/local/bin/corntrack_raspberry_pi_app
+
 
       - name: Build the .deb Package
         run: dpkg-deb --build corntrack_raspberry_pi_app

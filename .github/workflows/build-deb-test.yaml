@@ -1,0 +1,71 @@
+name: Build Flutter .deb Package
+
+on:
+  push:
+    branches:
+      - test2
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      - name: Enable Linux Desktop Support
+        run: |
+          sudo apt update
+          sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev -y
+          flutter config --enable-linux-desktop
+
+      - name: Build Flutter for Linux
+        run: flutter build linux
+
+      - name: Prepare DEB Package Structure
+        run: |
+          mkdir -p myapp_deb/DEBIAN
+          mkdir -p myapp_deb/usr/local/bin
+          mkdir -p myapp_deb/usr/share/applications
+          mkdir -p myapp_deb/usr/share/icons/hicolor/256x256/apps
+
+          cp -r build/linux/x64/release/bundle myapp_deb/usr/local/bin/myapp
+
+          cat <<EOF > myapp_deb/DEBIAN/control
+          Package: myapp
+          Version: 1.0.0
+          Section: base
+          Priority: optional
+          Architecture: amd64
+          Maintainer: Your Name <your.email@example.com>
+          Description: A Flutter-based desktop application
+          EOF
+
+          cat <<EOF > myapp_deb/usr/share/applications/myapp.desktop
+          [Desktop Entry]
+          Name=MyApp
+          Comment=My Flutter Desktop App
+          Exec=/usr/local/bin/myapp/myapp
+          Icon=/usr/share/icons/hicolor/256x256/apps/myapp.png
+          Terminal=false
+          Type=Application
+          Categories=Utility;
+          EOF
+
+          chmod 755 myapp_deb/DEBIAN
+          chmod 755 myapp_deb/usr/local/bin/myapp/myapp
+
+      - name: Build the .deb Package
+        run: dpkg-deb --build myapp_deb
+
+      - name: Upload DEB Package as an Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myapp-deb
+          path: myapp_deb.deb

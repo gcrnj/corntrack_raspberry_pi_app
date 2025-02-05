@@ -30,17 +30,17 @@ jobs:
 
       - name: Prepare DEB Package Structure
         run: |
-          rm -rf corntrack_raspberry_pi_app
+          rm -rf corntrackrpi
 
-          mkdir -p corntrack_raspberry_pi_app/DEBIAN
-          mkdir -p corntrack_raspberry_pi_app/usr/local/bin
-          mkdir -p corntrack_raspberry_pi_app/usr/share/applications
-          mkdir -p corntrack_raspberry_pi_app/usr/share/icons/hicolor/256x256/apps
+          mkdir -p corntrackrpi/DEBIAN
+          mkdir -p corntrackrpi/usr/local/bin
+          mkdir -p corntrackrpi/usr/share/applications
+          mkdir -p corntrackrpi/usr/share/icons/hicolor/256x256/apps
 
-          cp build/linux/x64/release/bundle/corntrack_raspberry_pi_app corntrack_raspberry_pi_app/usr/local/bin/corntrack_raspberry_pi_app
+          cp build/linux/x64/release/bundle/corntrackrpi corntrackrpi/usr/local/bin/corntrackrpi
 
-          cat <<EOF > corntrack_raspberry_pi_app/DEBIAN/control
-          Package: corntrack_raspberry_pi_app
+          cat <<EOF > corntrackrpi/DEBIAN/control
+          Package: corntrackrpi
           Version: 1.0.0
           Section: base
           Priority: optional
@@ -49,24 +49,24 @@ jobs:
           Description: A Flutter-based desktop application for Raspberry Pi
           EOF
 
-          cat <<EOF > corntrack_raspberry_pi_app/usr/share/applications/corntrack_raspberry_pi_app.desktop
+          cat <<EOF > corntrackrpi/usr/share/applications/corntrackrpi.desktop
           [Desktop Entry]
-          Name=corntrack_raspberry_pi_app
+          Name=corntrackrpi
           Comment=Raspberry Pi Flutter Desktop App
-          Exec=/usr/local/bin/corntrack_raspberry_pi_app
-          Icon=/usr/share/icons/hicolor/256x256/apps/corntrack_raspberry_pi_app.png
+          Exec=/usr/local/bin/corntrackrpi
+          Icon=/usr/share/icons/hicolor/256x256/apps/corntrackrpi.png
           Terminal=false
           Type=Application
           Categories=Utility;
           EOF
 
-          chmod +x corntrack_raspberry_pi_app/usr/local/bin/corntrack_raspberry_pi_app
+          chmod +x corntrackrpi/usr/local/bin/corntrackrpi
 
       - name: Build the .deb Package
-        run: dpkg-deb --build corntrack_raspberry_pi_app
+        run: dpkg-deb --build corntrackrpi
 
       - name: Upload DEB Package as an Artifact
         uses: actions/upload-artifact@v4
         with:
           name: myapp-deb
-          path: corntrack_raspberry_pi_app.deb
+          path: corntrackrpi.deb

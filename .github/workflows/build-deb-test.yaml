@@ -37,7 +37,7 @@ jobs:
       - name: Build Flutter for ARM64 (aarch64)
         run: |
           # Ensure we are building the app for ARM64
-          flutter build linux --target=arm64
+          flutter build linux
 
       - name: List build output (ARM64 Debug)
         run: ls -l build/linux/arm64/release/bundle

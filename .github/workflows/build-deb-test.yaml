@@ -37,7 +37,7 @@ jobs:
           mkdir -p corntrackrpi/usr/share/applications
           mkdir -p corntrackrpi/usr/share/icons/hicolor/256x256/apps
 
-          cp build/linux/x64/release/bundle/corntrackrpi corntrackrpi/usr/local/bin/corntrackrpi
+          cp build/linux/x64/release/bundle/corntrack_raspberr_pi_app corntrackrpi/usr/local/bin/corntrackrpi
 
           cat <<EOF > corntrackrpi/DEBIAN/control
           Package: corntrackrpi

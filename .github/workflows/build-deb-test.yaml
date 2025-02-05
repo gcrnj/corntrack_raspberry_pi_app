@@ -30,14 +30,14 @@ jobs:
 
       - name: Prepare DEB Package Structure
         run: |
-          mkdir -p myapp_deb/DEBIAN
-          mkdir -p myapp_deb/usr/local/bin
-          mkdir -p myapp_deb/usr/share/applications
-          mkdir -p myapp_deb/usr/share/icons/hicolor/256x256/apps
+          mkdir -p corntrack_raspberry_pi_app/DEBIAN
+          mkdir -p corntrack_raspberry_pi_app/usr/local/bin
+          mkdir -p corntrack_raspberry_pi_app/usr/share/applications
+          mkdir -p corntrack_raspberry_pi_app/usr/share/icons/hicolor/256x256/apps
 
-          cp -r build/linux/x64/release/bundle myapp_deb/usr/local/bin/myapp
+          cp -r build/linux/x64/release/bundle corntrack_raspberry_pi_app/usr/local/bin/myapp
 
-          cat <<EOF > myapp_deb/DEBIAN/control
+          cat <<EOF > corntrack_raspberry_pi_app/DEBIAN/control
           Package: myapp
           Version: 1.0.0
           Section: base
@@ -47,7 +47,7 @@ jobs:
           Description: A Flutter-based desktop application
           EOF
 
-          cat <<EOF > myapp_deb/usr/share/applications/myapp.desktop
+          cat <<EOF > corntrack_raspberry_pi_app/usr/share/applications/myapp.desktop
           [Desktop Entry]
           Name=MyApp
           Comment=My Flutter Desktop App
@@ -58,14 +58,14 @@ jobs:
           Categories=Utility;
           EOF
 
-          chmod 755 myapp_deb/DEBIAN
-          chmod 755 myapp_deb/usr/local/bin/myapp/myapp
+          chmod 755 corntrack_raspberry_pi_app/DEBIAN
+          chmod 755 corntrack_raspberry_pi_app/usr/local/bin/myapp/myapp
 
       - name: Build the .deb Package
-        run: dpkg-deb --build myapp_deb
+        run: dpkg-deb --build corntrack_raspberry_pi_app
 
       - name: Upload DEB Package as an Artifact
         uses: actions/upload-artifact@v4
         with:
           name: myapp-deb
-          path: myapp_deb.deb
+          path: corntrack_raspberry_pi_app.deb

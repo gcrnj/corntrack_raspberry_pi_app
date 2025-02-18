@@ -12,7 +12,7 @@ abstract class ServicesBase {
 
 
   ServicesBase() {
-    baseUrl = 'https://firestore.googleapis.com/v1/projects/project-corntrack/databases/(default)/documents'; // Initialize baseUrl with the value from dotenv or an empty string
+    baseUrl = 'http://192.168.254.104:5000'; // Initialize baseUrl with the value from dotenv or an empty string
   }
 
   bool isSuccessStatusCode(int statusCode) {

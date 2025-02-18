@@ -1,5 +1,6 @@
 
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/dashboard_screen.dart';
+import 'package:corntrack_raspberry_pi_app/screens/hourly_temperature/hourly_temperature.dart';
 import 'package:corntrack_raspberry_pi_app/screens/register/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -34,6 +35,14 @@ final GoRouter _appRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return const DashboardScreen();
       },
+      routes: [
+        GoRoute(
+          path: '/hourly_temperature',
+          builder: (BuildContext context, GoRouterState state) {
+            return HourlyTemperature();
+          },
+        ),
+      ]
 
     ),
   ],

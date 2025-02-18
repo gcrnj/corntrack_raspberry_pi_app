@@ -61,8 +61,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     deviceId ??= await devicesServices.registerDevice();
 
     if(deviceId != null) {
+      print('Saving key');
       prefs.setString(PrefKeys.deviceId.name, deviceId);
       appRouter.go('/dashboard');
+    } else {
+      print('Key already registered');
     }
     ref.read(isLoadingProvider.notifier).state = false;
 

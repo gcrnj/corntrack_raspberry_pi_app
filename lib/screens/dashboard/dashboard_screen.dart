@@ -1,3 +1,4 @@
+import 'package:corntrack_raspberry_pi_app/app_router.dart';
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/editable_name_widget.dart';
 import 'package:corntrack_raspberry_pi_app/services/devices_services.dart';
 import 'package:corntrack_raspberry_pi_app/services/moisture_reading_services.dart';
@@ -169,7 +170,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             Expanded(
                               child: _buildClickableContainer(
                                 'Hourly Temperature',
-                                onTap: () {},
+                                onTap: () {
+                                  appRouter.go('/dashboard/hourly_temperature');
+                                },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,
                                 isCornPot: false,

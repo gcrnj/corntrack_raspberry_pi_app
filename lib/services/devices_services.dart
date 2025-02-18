@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../data/device_details.dart';
 import 'base.dart';
 
 class DevicesServices extends ServicesBase {
@@ -12,6 +13,7 @@ class DevicesServices extends ServicesBase {
   /// /devices/register
   Future<String?> registerDevice() async {
     // Firebase Firestore endpoint URL
+    return '2bhE03Y9sc4rUHtj4hcy';
     final String url = '$devicesUrl/register';
 
     // Sending POST request to Firestore
@@ -31,6 +33,12 @@ class DevicesServices extends ServicesBase {
     // Result in json = json.decode(response.body);
 
     return deviceId;
+  }
+
+  Future<DeviceDetails?> getDeviceDetails() async {
+
+    return DeviceDetails(deviceName: 'Abc', ownerId: 'abc');
+    final String url = '$devicesUrl/details';
   }
 
 }

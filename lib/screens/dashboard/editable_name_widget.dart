@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class EditableNameWidget extends StatefulWidget {
-  const EditableNameWidget({super.key});
+  final String text;
+  final ValueChanged<String> onSubmitted;
+
+  const EditableNameWidget({super.key, required this.text, required this.onSubmitted});
 
   @override
   State<EditableNameWidget> createState() => _EditableNameWidgetState();
@@ -9,7 +12,8 @@ class EditableNameWidget extends StatefulWidget {
 
 class _EditableNameWidgetState extends State<EditableNameWidget> {
   bool _isEditing = false;
-  final TextEditingController _controller = TextEditingController(text: 'Main System');
+  late final TextEditingController _controller =
+      TextEditingController(text: widget.text);
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +27,13 @@ class _EditableNameWidgetState extends State<EditableNameWidget> {
                 style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                 autofocus: true,
                 onSubmitted: (value) {
-                  setState(() {
-                    _isEditing = false;
+                  widget.onSubmitted(_controller.value.text);
+                  Future.microtask(() {
+                    if (mounted) {
+                      setState(() {
+                        _isEditing = false;
+                      });
+                    }
                   });
                 },
               )
@@ -37,9 +46,7 @@ class _EditableNameWidgetState extends State<EditableNameWidget> {
           child: Row(
             children: [
               FilledButton(
-                onPressed: () {
-
-                },
+                onPressed: () {},
                 child: Text('Show QR Code'),
               ),
               IconButton(

@@ -1,9 +1,12 @@
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/editable_name_widget.dart';
+import 'package:corntrack_raspberry_pi_app/services/devices_services.dart';
 import 'package:corntrack_raspberry_pi_app/services/moisture_reading_services.dart';
 import 'package:corntrack_raspberry_pi_app/utility/icons_paths.dart';
 import 'package:corntrack_utils/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../data/device_details.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -29,6 +32,10 @@ enum Pots {
   }
 }
 
+final deviceDetailsProvider = StateProvider<DeviceDetails?>(
+  (ref) => null,
+);
+
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   final BoxDecoration _containerDecor = BoxDecoration(
     color: lightYellowColor,
@@ -48,22 +55,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   final buttonsPadding = EdgeInsets.symmetric(horizontal: 14, vertical: 22);
 
+  final deviceServices = DevicesServices();
+
+  @override
+  void initState() {
+    reloadDeviceDetails();
+    super.initState();
+  }
+
+  void reloadDeviceDetails() async {
+    final deviceDetails = deviceServices.getDeviceDetails();
+    ref.read(deviceDetailsProvider.notifier).state = await deviceDetails;
+  }
+
   @override
   Widget build(BuildContext context) {
     final selectedCornPots = ref.watch(selectedCornPotProvider);
-    MoistureReadingServices()
-      ..getAll()
-      ..add({
-        'moisture': {
-          'doubleValue': 25,
-        },
-        'pot': {
-          'integerValue': 3,
-        },
-        'time': {
-          'timestampValue': DateTime.now().toUtc().toIso8601String(),
-        }
-      });
+    final deviceDetails = ref.watch(deviceDetailsProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -88,7 +97,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 margin: _padding8,
                                 padding: _padding8,
                                 decoration: _containerDecor.copyWith(),
-                                child: EditableNameWidget(),
+                                child: deviceDetails == null
+                                    ? CircularProgressIndicator()
+                                    : EditableNameWidget(
+                                        text: deviceDetails.deviceName,
+                                        onSubmitted: (newValue) {
+                                          print('Device name edited to: $newValue');
+                                        },
+                                      ),
                               ),
                             ),
                             Expanded(

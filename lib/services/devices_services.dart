@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:corntrack_raspberry_pi_app/api/device_api.dart';
-import 'package:corntrack_raspberry_pi_app/api/dummy_device_api.dart';
+import 'package:corntrack_raspberry_pi_app/api/device_api/device_api.dart';
+import 'package:corntrack_raspberry_pi_app/api/device_api/dummy_device_api.dart';
 import 'package:corntrack_raspberry_pi_app/data/api_data.dart';
 import 'package:flutter/foundation.dart';
 

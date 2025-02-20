@@ -1,36 +1,40 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:corntrack_raspberry_pi_app/services/base.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:corntrack_raspberry_pi_app/api/moisture_reading_api/moisture_reading_api.dart';
+import 'package:corntrack_raspberry_pi_app/data/api_data.dart';
+import 'package:flutter/foundation.dart';
 
-import '../utility/prefsKeys.dart';
+import '../api/moisture_reading_api/dummy_moisture_reading_api.dart';
+import '../data/hourly_temperature_data.dart';
+import '../data/moisture_reading_data.dart';
 
-import 'package:http/http.dart' as http;
-
-class MoistureReadingModel {
-  MoistureReadingModel({
-    required this.moisture,
-    required this.pot,
-    required this.time,
-    this.temperature,
-  });
-
-  final String moisture;
-  final String pot; // Pot field as a String (or you can choose to keep it as int or double if needed)
-  final DateTime time;
-  final String? temperature;
-
+class MoistureReadingServiceFactory {
+  static MoistureReadingService create() {
+    if (kIsWeb) {
+      return MoistureReadingService(DummyMoistureReadingApi());
+    } else if (Platform.isLinux) {
+      return MoistureReadingService(MoistureReadingApi());
+    } else {
+      return MoistureReadingService(DummyMoistureReadingApi());
+    }
+  }
 }
 
-class MoistureReadingServices extends ServicesBase {
+class MoistureReadingService {
+  final IMoistureReadingApi moistureReadingApi;
 
-  Future<List<MoistureReadingModel>> getAll() async {
-    return List.empty();
+  MoistureReadingService(this.moistureReadingApi);
+
+  Future<ApiData<List<MoistureReadingData>>> getAll() async {
+    return moistureReadingApi.getAll();
   }
 
-  Future<bool> add(Map<dynamic, dynamic> body) async {
-    return false;
+  Future<ApiData<bool>> add(Map<dynamic, dynamic> body) async {
+    return moistureReadingApi.add(body);
   }
 
-
+  Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(DateTime start, DateTime end) async {
+    return moistureReadingApi.getHourlyTemperature(start, end);
+  }
 }

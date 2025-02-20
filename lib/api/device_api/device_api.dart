@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:corntrack_raspberry_pi_app/api/device_api/flask_api.dart';
+import 'package:corntrack_raspberry_pi_app/api/flask_api.dart';
 import '../../data/api_data.dart';
 import 'package:http/http.dart' as http;
 

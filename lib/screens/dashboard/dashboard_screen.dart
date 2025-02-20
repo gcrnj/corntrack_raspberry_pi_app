@@ -1,13 +1,14 @@
 import 'package:corntrack_raspberry_pi_app/app_router.dart';
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/editable_name_widget.dart';
 import 'package:corntrack_raspberry_pi_app/services/devices_services.dart';
-import 'package:corntrack_raspberry_pi_app/services/moisture_reading_services.dart';
 import 'package:corntrack_raspberry_pi_app/utility/icons_paths.dart';
 import 'package:corntrack_utils/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/device_details.dart';
+import '../../utility/prefsKeys.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -56,7 +57,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   final buttonsPadding = EdgeInsets.symmetric(horizontal: 14, vertical: 22);
 
-  final deviceServices = DevicesServices();
+  final deviceServices = DevicesServicesFactory.create();
 
   @override
   void initState() {
@@ -65,8 +66,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void reloadDeviceDetails() async {
-    final deviceDetails = deviceServices.getDeviceDetails();
-    ref.read(deviceDetailsProvider.notifier).state = await deviceDetails;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final deviceDetails = await deviceServices.getDeviceDetails(prefs.getString(PrefKeys.deviceId.name) ?? '');
+    ref.read(deviceDetailsProvider.notifier).state = deviceDetails.data;
   }
 
   @override
@@ -103,7 +105,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     : EditableNameWidget(
                                         text: deviceDetails.deviceName,
                                         onSubmitted: (newValue) {
-                                          print('Device name edited to: $newValue');
+                                          print(
+                                              'Device name edited to: $newValue');
                                         },
                                       ),
                               ),

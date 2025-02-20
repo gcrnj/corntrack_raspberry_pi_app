@@ -1,4 +1,5 @@
 import 'package:corntrack_raspberry_pi_app/app_router.dart';
+import 'package:corntrack_raspberry_pi_app/data/api_data.dart';
 import 'package:corntrack_raspberry_pi_app/services/devices_services.dart';
 import 'package:corntrack_raspberry_pi_app/utility/prefsKeys.dart';
 import 'package:flutter/material.dart';
@@ -14,13 +15,12 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final isLoadingProvider = StateProvider<bool>((ref) => true);
+  final registeredDeviceDataProvider = StateProvider<ApiData<String?>?>((ref) => null);
 
-  late DevicesServices devicesServices;
+  DevicesServices devicesServices = DevicesServicesFactory.create();
   @override
   void initState() {
     super.initState();
-    devicesServices = DevicesServices();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkRegistration();
     });
@@ -29,6 +29,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(isLoadingProvider);
+    final registeredDeviceData = ref.watch(registeredDeviceDataProvider);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -37,7 +38,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               children: [
                 Text(isLoading
                     ? 'Registering this device...'
-                    : 'Device failed to register'),
+                    : (registeredDeviceData?.error ?? 'Device failed to register. Please contact the developers.')),
                 FilledButton(
                   onPressed: isLoading ? null : checkRegistration,
                   child: isLoading ? CircularProgressIndicator() : Text('Retry'),
@@ -58,16 +59,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? deviceId = prefs.getString(PrefKeys.deviceId.name);
-    deviceId ??= await devicesServices.registerDevice();
+    ApiData<String?> registeredDeviceData = await devicesServices.registerDevice();
+    deviceId ??= registeredDeviceData.data;
 
     if(deviceId != null) {
-      print('Saving key');
+      print('Saving Device Key - $deviceId');
       prefs.setString(PrefKeys.deviceId.name, deviceId);
       appRouter.go('/dashboard');
-    } else {
-      print('Key already registered');
     }
     ref.read(isLoadingProvider.notifier).state = false;
+    ref.read(registeredDeviceDataProvider.notifier).state = registeredDeviceData;
 
 
   }

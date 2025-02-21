@@ -15,17 +15,17 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
   Future<ApiData<List<MoistureReadingData>>> getAll() async {
     return ApiData.success(data: [
       MoistureReadingData(
-          moisture: '20.5', pot: '3', time: DateTime.now(), temperature: '25'),
+          moisture: '20.5', pot: '3', dateTime: DateTime.now(), temperature: '25'),
       MoistureReadingData(
-          moisture: '40.5', pot: '3', time: DateTime.now(), temperature: '25'),
+          moisture: '40.5', pot: '3', dateTime: DateTime.now(), temperature: '25'),
       MoistureReadingData(
-          moisture: '30', pot: '3', time: DateTime.now(), temperature: '25'),
+          moisture: '30', pot: '3', dateTime: DateTime.now(), temperature: '25'),
       MoistureReadingData(
-          moisture: '25', pot: '3', time: DateTime.now(), temperature: '25'),
+          moisture: '25', pot: '3', dateTime: DateTime.now(), temperature: '25'),
       MoistureReadingData(
-          moisture: '50', pot: '3', time: DateTime.now(), temperature: '25'),
+          moisture: '50', pot: '3', dateTime: DateTime.now(), temperature: '25'),
       MoistureReadingData(
-          moisture: '32', pot: '3', time: DateTime.now(), temperature: '25'),
+          moisture: '32', pot: '3', dateTime: DateTime.now(), temperature: '25'),
     ]);
   }
 
@@ -36,6 +36,16 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
       HourlyTemperatureData(temperature: '25', dateTime: DateTime.now()),
       HourlyTemperatureData(temperature: '35', dateTime: DateTime.now()),
       HourlyTemperatureData(temperature: '30', dateTime: DateTime.now()),
+    ]);
+  }
+
+  @override
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(
+      DateTime start, DateTime end) async {
+    return ApiData.success(data: [
+      MoistureReadingData(moisture: '25', pot: '2', temperature: '25', dateTime: DateTime.now()),
+      MoistureReadingData(moisture: '36', pot: '2', temperature: '25', dateTime: DateTime.now()),
+      MoistureReadingData(moisture: '35', pot: '2', temperature: '25', dateTime: DateTime.now()),
     ]);
   }
 }

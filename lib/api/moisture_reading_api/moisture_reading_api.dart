@@ -8,6 +8,7 @@ import '../../data/moisture_reading_data.dart';
 abstract class IMoistureReadingApi extends FlaskApi {
   Future<ApiData<List<MoistureReadingData>>> getAll();
   Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(DateTime start, DateTime end);
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end);
   Future<ApiData<bool>> add(Map<dynamic, dynamic> body);
 
 }
@@ -28,6 +29,12 @@ class MoistureReadingApi extends IMoistureReadingApi {
   @override
   Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(DateTime start, DateTime end) {
     // TODO: implement getHourlyTemperature
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end) {
+    // TODO: implement getSoilMoistureData
     throw UnimplementedError();
   }
 

@@ -1,33 +1,33 @@
-import 'package:corntrack_raspberry_pi_app/data/api_data.dart';
-import 'package:corntrack_raspberry_pi_app/screens/range_date_picker/range_date_picker.dart';
-import 'package:corntrack_raspberry_pi_app/services/moisture_reading_services.dart';
+import 'package:corntrack_raspberry_pi_app/data/moisture_reading_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_table_view/material_table_view.dart';
-import 'package:material_table_view/table_view_typedefs.dart';
 
+import '../../data/api_data.dart';
 import '../../data/hourly_temperature_data.dart';
+import '../../services/moisture_reading_services.dart';
+import '../range_date_picker/range_date_picker.dart';
 
-class HourlyTemperature extends ConsumerStatefulWidget {
-  const HourlyTemperature({super.key});
+class SoilMoistureReport extends ConsumerStatefulWidget {
+  const SoilMoistureReport({super.key});
 
   @override
-  ConsumerState<HourlyTemperature> createState() => _HourlyTemperatureState();
+  ConsumerState<SoilMoistureReport> createState() => _SoilMoistureReportState();
 }
 
-class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
+class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
   final moistureReadingService = MoistureReadingServiceFactory.create();
-  late final FutureProvider<ApiData<List<HourlyTemperatureData>>>
+  late final FutureProvider<ApiData<List<MoistureReadingData>>>
       temperatureProvider;
 
   @override
   void initState() {
     temperatureProvider =
-        FutureProvider<ApiData<List<HourlyTemperatureData>>>((ref) async {
-      print('Fetching Hourly Temperature from $startDate to $endDate');
-      return await moistureReadingService.getHourlyTemperature(
+        FutureProvider<ApiData<List<MoistureReadingData>>>((ref) async {
+      print('Fetching Soil Moisture Report from $startDate to $endDate');
+      return await moistureReadingService.getSoilMoistureData(
           startDate, endDate);
     });
     super.initState();
@@ -39,7 +39,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hourly Temperature'),
+        title: Text('Soil Moisture Report'),
       ),
       body: Column(
         children: [
@@ -56,7 +56,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
             child: SizedBox(
               width: double.infinity,
               child: temperatureData.when(
-                data: (ApiData<List<HourlyTemperatureData>> data) {
+                data: (ApiData<List<MoistureReadingData>> data) {
                   if (data.isSuccess && data.data != null) {
                     return TableView.builder(
                       // Add Header
@@ -68,9 +68,11 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                             context,
                             (context, column) {
                               const headers = {
-                                0: "Date",
-                                1: "Time",
-                                2: "Temperature",
+                                0: "Pot",
+                                1: "Date",
+                                2: "Time",
+                                3: "Soil Moisture",
+                                4: "Temperature",
                               };
 
                               return Align(
@@ -79,8 +81,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                                     : Alignment.centerLeft,
                                 child: Text(
                                   headers[column] ?? "",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               );
                             },
@@ -88,11 +89,13 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                         );
                       },
                       columns: [
-                        TableColumn(width: 200, freezePriority: 1),
-                        // Time Column
+                        TableColumn(width: 50, freezePriority: 1),
                         TableColumn(width: 200),
+                        // Time Column
+                        TableColumn(width: 100),
                         // Temperature Column
-                        TableColumn(width: 300),
+                        TableColumn(width: 100),
+                        TableColumn(width: 100),
                         // Temperature Column
                       ],
                       rowCount: data.data!.length,
@@ -109,17 +112,27 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                                 String text = '';
                                 switch (column) {
                                   case 0:
-                                    text = item.formattedDate();
+                                    text = item.pot;
                                   case 1:
-                                    text = item.formattedTime();
+                                    text = item.formattedDate();
                                   case 2:
-                                    text = item.temperature;
+                                    text = item.formattedTime();
+                                  case 3:
+                                    text = item.moisture;
+                                  case 4:
+                                    text = item.temperature ?? '';
                                 }
                                 return Align(
                                   alignment: column == 0
                                       ? Alignment.center
                                       : Alignment.centerLeft,
-                                  child: Text(text),
+                                  child: Text(
+                                    text,
+                                    style: TextStyle(
+                                        fontSize: column == 0 || column == 3
+                                            ? 20
+                                            : null),
+                                  ),
                                 );
                               },
                             ),

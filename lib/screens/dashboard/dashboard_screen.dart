@@ -241,7 +241,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             Expanded(
                               child: _buildClickableContainer(
                                 'Soil Moisture Report',
-                                onTap: () {},
+                                onTap: () {
+                                  appRouter.go('/dashboard/soil_moisture_report');
+                                },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,
                                 isCornPot: false,

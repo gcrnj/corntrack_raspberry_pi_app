@@ -14,11 +14,4 @@ class HourlyTemperatureData {
   String formattedDate() => DateFormat('MMMM dd, yyyy').format(dateTime);
   String formattedTime() => DateFormat('hh:mma').format(dateTime).toLowerCase();
 
-
-
-
-
-
-
-
 }

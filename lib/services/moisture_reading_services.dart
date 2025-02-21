@@ -34,6 +34,10 @@ class MoistureReadingService {
     return moistureReadingApi.add(body);
   }
 
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end) async {
+    return moistureReadingApi.getSoilMoistureData(start, end);
+  }
+
   Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(DateTime start, DateTime end) async {
     return moistureReadingApi.getHourlyTemperature(start, end);
   }

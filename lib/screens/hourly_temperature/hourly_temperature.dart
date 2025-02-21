@@ -70,13 +70,11 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                               const headers = {
                                 0: "Date",
                                 1: "Time",
-                                2: "Temperature",
+                                2: "Temperature (°C)",
                               };
 
                               return Align(
-                                alignment: column == 0
-                                    ? Alignment.center
-                                    : Alignment.centerLeft,
+                                alignment: Alignment.center,
                                 child: Text(
                                   headers[column] ?? "",
                                   style: const TextStyle(
@@ -92,7 +90,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                         // Time Column
                         TableColumn(width: 200),
                         // Temperature Column
-                        TableColumn(width: 300),
+                        TableColumn(width: 200),
                         // Temperature Column
                       ],
                       rowCount: data.data!.length,
@@ -116,9 +114,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                                     text = item.temperature;
                                 }
                                 return Align(
-                                  alignment: column == 0
-                                      ? Alignment.center
-                                      : Alignment.centerLeft,
+                                  alignment: Alignment.center,
                                   child: Text(text),
                                 );
                               },

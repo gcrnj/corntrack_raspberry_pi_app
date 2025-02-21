@@ -72,13 +72,11 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                                 1: "Date",
                                 2: "Time",
                                 3: "Soil Moisture",
-                                4: "Temperature",
+                                4: "Temperature (°C)",
                               };
 
                               return Align(
-                                alignment: column == 0
-                                    ? Alignment.center
-                                    : Alignment.centerLeft,
+                                alignment: Alignment.center,
                                 child: Text(
                                   headers[column] ?? "",
                                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -92,10 +90,10 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                         TableColumn(width: 50, freezePriority: 1),
                         TableColumn(width: 200),
                         // Time Column
-                        TableColumn(width: 100),
+                        TableColumn(width: 200),
                         // Temperature Column
                         TableColumn(width: 100),
-                        TableColumn(width: 100),
+                        TableColumn(width: 200),
                         // Temperature Column
                       ],
                       rowCount: data.data!.length,
@@ -123,9 +121,7 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                                     text = item.temperature ?? '';
                                 }
                                 return Align(
-                                  alignment: column == 0
-                                      ? Alignment.center
-                                      : Alignment.centerLeft,
+                                  alignment: Alignment.center,
                                   child: Text(
                                     text,
                                     style: TextStyle(

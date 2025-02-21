@@ -44,6 +44,7 @@ class _RangeDatePickerState extends State<RangeDatePicker> {
                 millisecond: 0,
                 microsecond: 0,
               );
+              widget.onDateSelected(_startDate, _endDate);
             });
           },
         ),
@@ -67,6 +68,7 @@ class _RangeDatePickerState extends State<RangeDatePicker> {
                 millisecond: 999,
                 microsecond: 999,
               );
+              widget.onDateSelected(_startDate, _endDate);
             });
           },
         ),

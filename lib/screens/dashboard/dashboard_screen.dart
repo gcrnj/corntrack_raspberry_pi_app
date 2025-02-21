@@ -239,7 +239,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             Expanded(
                               child: _buildClickableContainer(
                                 'Water Distribution',
-                                onTap: () {},
+                                onTap: () {
+                                  appRouter.go('/dashboard/water_distribution', extra: selectedCornPots);
+                                },
                                 margin: _padding8Left,
                                 padding: buttonsPadding,
                                 isCornPot: false,

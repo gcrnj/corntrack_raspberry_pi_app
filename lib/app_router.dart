@@ -3,6 +3,7 @@ import 'package:corntrack_raspberry_pi_app/screens/dashboard/dashboard_screen.da
 import 'package:corntrack_raspberry_pi_app/screens/hourly_temperature/hourly_temperature.dart';
 import 'package:corntrack_raspberry_pi_app/screens/register/register_screen.dart';
 import 'package:corntrack_raspberry_pi_app/screens/soil_moisture_report/soil_moisture_report.dart';
+import 'package:corntrack_raspberry_pi_app/screens/water_distribution/water_distribution_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -48,6 +49,13 @@ final GoRouter _appRouter = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             final selectedCornPots = (state.extra as List<Pots>?) ?? List.empty(); // Adjust type accordingly
             return SoilMoistureReport(selectedCornPots: selectedCornPots);
+          },
+        ),
+        GoRoute(
+          path: '/water_distribution',
+          builder: (BuildContext context, GoRouterState state) {
+            final selectedCornPots = (state.extra as List<Pots>?) ?? List.empty(); // Adjust type accordingly
+            return WaterDistributionReport(selectedCornPots: selectedCornPots);
           },
         ),
       ]

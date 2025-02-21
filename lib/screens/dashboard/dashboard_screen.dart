@@ -1,5 +1,6 @@
 import 'package:corntrack_raspberry_pi_app/app_router.dart';
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/editable_name_widget.dart';
+import 'package:corntrack_raspberry_pi_app/screens/failed_uploads_widget/failed_uploads_widget.dart';
 import 'package:corntrack_raspberry_pi_app/services/devices_services.dart';
 import 'package:corntrack_raspberry_pi_app/utility/icons_paths.dart';
 import 'package:corntrack_utils/utils/colors_utility.dart';
@@ -290,6 +291,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         Text(
                           'Failed Uploads',
                         ),
+                        FailedUploadsWidget(),
                       ],
                     ),
                   ),

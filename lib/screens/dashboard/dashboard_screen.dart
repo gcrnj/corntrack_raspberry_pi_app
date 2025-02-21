@@ -111,7 +111,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 clipBehavior: Clip.hardEdge,
                                 margin: _padding8,
                                 padding: _padding8,
-                                decoration: _containerDecor.copyWith(),
+                                decoration: _containerDecor.copyWith(
+                                  border:  Border.all(
+                                    color: semiBlackColor,
+                                    width: 2,
+                                  ),
+                                ),
                                 child: deviceDetails == null
                                     ? CircularProgressIndicator()
                                     : EditableNameWidget(
@@ -129,7 +134,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 clipBehavior: Clip.hardEdge,
                                 margin: _padding8,
                                 padding: _padding8,
-                                decoration: _containerDecor,
+                                decoration: _containerDecor.copyWith(
+                                  border:  Border.all(
+                                    color: semiBlackColor,
+                                    width: 2,
+                                  ),
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -280,7 +290,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   clipBehavior: Clip.hardEdge,
                   margin: _padding8,
                   padding: _padding8,
-                  decoration: _containerDecor,
+                  decoration: _containerDecor.copyWith(
+                    border:  Border.all(
+                      color: semiBlackColor,
+                      width: 2,
+                    ),
+                  ),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       minWidth: 277, // based on the

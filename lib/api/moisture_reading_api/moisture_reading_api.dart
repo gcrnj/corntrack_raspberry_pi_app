@@ -4,11 +4,12 @@ import 'package:corntrack_raspberry_pi_app/api/flask_api.dart';
 import '../../data/api_data.dart';
 import '../../data/hourly_temperature_data.dart';
 import '../../data/moisture_reading_data.dart';
+import '../../screens/dashboard/dashboard_screen.dart';
 
 abstract class IMoistureReadingApi extends FlaskApi {
   Future<ApiData<List<MoistureReadingData>>> getAll();
   Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(DateTime start, DateTime end);
-  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end);
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end, List<Pots> selectedCornPots);
   Future<ApiData<bool>> add(Map<dynamic, dynamic> body);
 
 }
@@ -33,7 +34,7 @@ class MoistureReadingApi extends IMoistureReadingApi {
   }
 
   @override
-  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end) {
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end, List<Pots> selectedCornPots) {
     // TODO: implement getSoilMoistureData
     throw UnimplementedError();
   }

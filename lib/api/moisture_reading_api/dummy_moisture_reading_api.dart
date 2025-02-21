@@ -3,6 +3,7 @@ import 'package:corntrack_raspberry_pi_app/data/hourly_temperature_data.dart';
 
 import 'package:corntrack_raspberry_pi_app/data/moisture_reading_data.dart';
 
+import '../../screens/dashboard/dashboard_screen.dart';
 import 'moisture_reading_api.dart';
 
 class DummyMoistureReadingApi extends IMoistureReadingApi {
@@ -41,11 +42,12 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
 
   @override
   Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(
-      DateTime start, DateTime end) async {
+      DateTime start, DateTime end, List<Pots> selectedCornPots) async {
+    final potNumbers = selectedCornPots.map((e) => e.getNumber().toString()).toList();
     return ApiData.success(data: [
       MoistureReadingData(moisture: '25', pot: '2', temperature: '25', dateTime: DateTime.now()),
       MoistureReadingData(moisture: '36', pot: '2', temperature: '25', dateTime: DateTime.now()),
       MoistureReadingData(moisture: '35', pot: '2', temperature: '25', dateTime: DateTime.now()),
-    ]);
+    ].where((element) => potNumbers.contains(element.pot)).toList());
   }
 }

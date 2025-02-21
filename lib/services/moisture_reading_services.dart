@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import '../api/moisture_reading_api/dummy_moisture_reading_api.dart';
 import '../data/hourly_temperature_data.dart';
 import '../data/moisture_reading_data.dart';
+import '../screens/dashboard/dashboard_screen.dart';
 
 class MoistureReadingServiceFactory {
   static MoistureReadingService create() {
@@ -34,8 +35,8 @@ class MoistureReadingService {
     return moistureReadingApi.add(body);
   }
 
-  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end) async {
-    return moistureReadingApi.getSoilMoistureData(start, end);
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end, List<Pots> selectedCornPots) async {
+    return moistureReadingApi.getSoilMoistureData(start, end, selectedCornPots);
   }
 
   Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(DateTime start, DateTime end) async {

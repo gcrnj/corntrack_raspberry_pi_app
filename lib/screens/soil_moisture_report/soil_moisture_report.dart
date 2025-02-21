@@ -4,12 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_table_view/material_table_view.dart';
 
 import '../../data/api_data.dart';
-import '../../data/hourly_temperature_data.dart';
 import '../../services/moisture_reading_services.dart';
+import '../dashboard/dashboard_screen.dart';
 import '../range_date_picker/range_date_picker.dart';
 
 class SoilMoistureReport extends ConsumerStatefulWidget {
-  const SoilMoistureReport({super.key});
+
+  final List<Pots> selectedCornPots;
+
+  const SoilMoistureReport({super.key, required this.selectedCornPots});
 
   @override
   ConsumerState<SoilMoistureReport> createState() => _SoilMoistureReportState();
@@ -28,7 +31,7 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
         FutureProvider<ApiData<List<MoistureReadingData>>>((ref) async {
       print('Fetching Soil Moisture Report from $startDate to $endDate');
       return await moistureReadingService.getSoilMoistureData(
-          startDate, endDate);
+          startDate, endDate, widget.selectedCornPots);
     });
     super.initState();
   }

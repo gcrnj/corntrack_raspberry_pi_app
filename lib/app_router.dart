@@ -46,7 +46,8 @@ final GoRouter _appRouter = GoRouter(
         GoRoute(
           path: '/soil_moisture_report',
           builder: (BuildContext context, GoRouterState state) {
-            return SoilMoistureReport();
+            final selectedCornPots = (state.extra as List<Pots>?) ?? List.empty(); // Adjust type accordingly
+            return SoilMoistureReport(selectedCornPots: selectedCornPots);
           },
         ),
       ]

@@ -32,6 +32,17 @@ enum Pots {
         return 'Pot 3';
     }
   }
+
+  int getNumber() {
+    switch (this) {
+      case Pots.pot1:
+        return 1;
+      case Pots.pot2:
+        return 2;
+        case Pots.pot3:
+        return 3;
+    }
+  }
 }
 
 final deviceDetailsProvider = StateProvider<DeviceDetails?>(
@@ -45,7 +56,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   );
 
   final selectedCornPotProvider = StateProvider<List<Pots>>(
-    (ref) => List.empty(growable: true),
+    (ref) => Pots.values,
   );
 
   final EdgeInsets _padding4 = EdgeInsets.all(4);
@@ -242,7 +253,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               child: _buildClickableContainer(
                                 'Soil Moisture Report',
                                 onTap: () {
-                                  appRouter.go('/dashboard/soil_moisture_report');
+                                  appRouter.go('/dashboard/soil_moisture_report', extra: selectedCornPots);
                                 },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,
@@ -296,7 +307,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Select Corn / Pots'),
+        Text('Select Corn / Pots (At least 1)'),
         Expanded(
           child: Padding(
             padding: EdgeInsets.only(bottom: 4),

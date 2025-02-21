@@ -30,27 +30,44 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
   @override
   Widget build(BuildContext context) {
     final failedUploads = ref.watch(failedUploadsProvider);
-    return SingleChildScrollView(
-      child: failedUploads.when(
-        data: (data) {
-          print('data ${data.data?.length}');
-          return Column(
-            children: data.data?.map((failedDUploadsData) {
-                  return _FailedUploadWidget(
-                      failedDUploadsData: failedDUploadsData);
-                }).toList() ??
-                List.empty(),
-          );
-        },
-        error: (error, stackTrace) {
-          print('error');
-          return Center(child: errorWidget(error.toString()));
-        },
-        loading: () {
-          print('loading');
-          return CircularProgressIndicator();
-        },
-      ),
+
+    return failedUploads.when(
+      data: (data) {
+        print('data ${data.data?.length}');
+        return Column(
+          children: [
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(top: 12),
+                width: double.infinity,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: data.data?.map((failedUpload) {
+                          return _FailedUploadWidget(
+                            failedDUploadsData: failedUpload,
+                          ) as Widget;
+                        }).toList() ??
+                        List.empty(),
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: retryButtonWidget(data.data?.length),
+            ),
+          ],
+        );
+      },
+      error: (error, stackTrace) {
+        print('error');
+        return Center(child: errorWidget(error.toString()));
+      },
+      loading: () {
+        print('loading');
+        return Center(child: CircularProgressIndicator());
+      },
     );
   }
 
@@ -63,6 +80,36 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
           child: Text('Retry'),
         ),
       ],
+    );
+  }
+
+  Widget retryButtonWidget(int? length) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(
+                'Total: ${length ?? 0}',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: FilledButton(
+                onPressed: () => ref.refresh(failedUploadsProvider.future),
+                child: Text(
+                  'Manual Upload',
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

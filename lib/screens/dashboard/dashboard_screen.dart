@@ -305,8 +305,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       children: [
                         Text(
                           'Failed Uploads',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-                        FailedUploadsWidget(),
+                        Expanded(child: FailedUploadsWidget()),
                       ],
                     ),
                   ),

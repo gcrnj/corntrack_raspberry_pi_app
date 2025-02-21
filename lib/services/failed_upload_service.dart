@@ -5,7 +5,6 @@ import '../api/failed_upload_api/dummy_failed_upload_api.dart';
 import '../api/failed_upload_api/failed_upload_api.dart';
 import '../data/api_data.dart';
 import '../data/failed_upload_data.dart';
-import '../services/failed_upload_service.dart';
 
 class FailedUploadServiceFactory {
   static FailedUploadService create() {
@@ -19,14 +18,13 @@ class FailedUploadServiceFactory {
   }
 }
 
-
 class FailedUploadService {
   final IFailedUploadApi failedUploadApi;
 
   FailedUploadService(this.failedUploadApi);
 
   Future<ApiData<List<FailedUploadData>>> getAllFailedUploads() async {
-   await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(seconds: 3));
     return failedUploadApi.getAllFailedUploads();
   }
 

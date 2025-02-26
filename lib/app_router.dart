@@ -1,6 +1,8 @@
 
+import 'package:corntrack_raspberry_pi_app/data/failed_upload_data.dart';
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/dashboard_screen.dart';
 import 'package:corntrack_raspberry_pi_app/screens/hourly_temperature/hourly_temperature.dart';
+import 'package:corntrack_raspberry_pi_app/screens/manual_upload/manual_upload.dart';
 import 'package:corntrack_raspberry_pi_app/screens/register/register_screen.dart';
 import 'package:corntrack_raspberry_pi_app/screens/soil_moisture_report/soil_moisture_report.dart';
 import 'package:corntrack_raspberry_pi_app/screens/water_distribution/water_distribution_screen.dart';
@@ -56,6 +58,13 @@ final GoRouter _appRouter = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             final selectedCornPots = (state.extra as List<Pots>?) ?? List.empty(); // Adjust type accordingly
             return WaterDistributionReport(selectedCornPots: selectedCornPots);
+          },
+        ),
+        GoRoute(
+          path: '/manual_upload',
+          builder: (BuildContext context, GoRouterState state) {
+            final failedUploads = (state.extra as List<FailedUploadData>?) ?? List.empty(); // Adjust type accordingly
+            return ManualUploadScreen(failedUploads: failedUploads);
           },
         ),
       ]

@@ -3,7 +3,7 @@ import 'package:corntrack_raspberry_pi_app/screens/dashboard/dashboard_screen.da
 class FailedUploadData {
   final DateTime dateTime;
   final String? image;
-  final FailedUploadDataType? dataType;
+  final FailedUploadDataType dataType;
   final Pots? pot;
 
   FailedUploadData({
@@ -20,6 +20,8 @@ class FailedUploadData {
         'pot': pot?.getNumber().toString() ?? '',
       };
 
+
+
   factory FailedUploadData.fromJson(Map<String, dynamic> json) {
     return FailedUploadData(
       dateTime: DateTime.parse(json['dateTime']),
@@ -33,7 +35,21 @@ class FailedUploadData {
 }
 
 enum FailedUploadDataType {
+  image,
   moisture,
   temperature,
-  soilMoisture,
+  waterDistribution;
+
+  String getDisplayName() {
+    switch(this) {
+      case FailedUploadDataType.image:
+        return 'Image';
+      case FailedUploadDataType.moisture:
+        return 'Soil Moisture';
+      case FailedUploadDataType.temperature:
+        return 'Temperature';
+      case FailedUploadDataType.waterDistribution:
+        return 'Water Distribution';
+    }
+  }
 }

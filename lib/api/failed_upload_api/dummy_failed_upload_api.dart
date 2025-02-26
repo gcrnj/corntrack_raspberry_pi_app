@@ -1,5 +1,6 @@
 import '../../data/api_data.dart';
 import '../../data/failed_upload_data.dart';
+import '../../screens/dashboard/dashboard_screen.dart';
 import 'failed_upload_api.dart';
 
 class DummyFailedUploadApi extends IFailedUploadApi {
@@ -7,15 +8,26 @@ class DummyFailedUploadApi extends IFailedUploadApi {
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 2)),
       image: 'image_2.png',
-      dataType: null,
+      dataType: FailedUploadDataType.image,
     ),
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 1)),
+      pot: Pots.pot1,
       dataType: FailedUploadDataType.moisture,
     ),
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 1)),
-      image: 'image_1.png',
+      pot: Pots.pot2,
+      dataType: FailedUploadDataType.moisture,
+    ),
+    FailedUploadData(
+      dateTime: DateTime.now().subtract(Duration(days: 2)),
+      pot: Pots.pot1,
+      dataType: FailedUploadDataType.temperature,
+    ),
+    FailedUploadData(
+      dateTime: DateTime.now().subtract(Duration(days: 2)),
+      pot: Pots.pot1,
       dataType: FailedUploadDataType.moisture,
     ),
   ];

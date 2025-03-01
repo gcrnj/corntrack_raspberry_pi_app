@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
     );
     return MaterialApp.router(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: baseTheme.copyWith(
         textTheme: GoogleFonts.beVietnamProTextTheme(baseTheme.textTheme),
       ),

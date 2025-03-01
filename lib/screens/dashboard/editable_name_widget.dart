@@ -47,7 +47,7 @@ class _EditableNameWidgetState extends State<EditableNameWidget> {
             children: [
               FilledButton(
                 onPressed: () {},
-                child: Text('Show QR Code'),
+                child: Text('Show QR Code', style: TextStyle(fontSize: 10),),
               ),
               IconButton(
                 onPressed: () {

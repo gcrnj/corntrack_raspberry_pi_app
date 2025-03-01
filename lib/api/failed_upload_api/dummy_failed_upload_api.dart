@@ -34,6 +34,7 @@ class DummyFailedUploadApi extends IFailedUploadApi {
 
   @override
   Future<ApiData<List<FailedUploadData>>> getAllFailedUploads() async {
+    return ApiData.success(data: List.empty());
     return ApiData.success(data: _dummyData);
   }
 

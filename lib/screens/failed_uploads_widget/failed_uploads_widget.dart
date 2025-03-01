@@ -38,6 +38,14 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
     return failedUploadsAsync.when(
       data: (data) {
         final failedUploads = data.data ?? List.empty();
+
+        if(failedUploads.isEmpty) {
+          return Column(
+            children: [
+              Text("You're all set!")
+            ],
+          );
+        }
         print('data ${failedUploads.length}');
 
         for (var value in failedUploads) {

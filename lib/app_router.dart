@@ -1,6 +1,9 @@
 
 import 'package:corntrack_raspberry_pi_app/data/failed_upload_data.dart';
+import 'package:corntrack_raspberry_pi_app/screens/captured_photos/captured_photos.dart';
+import 'package:corntrack_raspberry_pi_app/screens/wifi_connect/wifi_connect.dart';
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/dashboard_screen.dart';
+import 'package:corntrack_raspberry_pi_app/screens/health_status/health_status.dart';
 import 'package:corntrack_raspberry_pi_app/screens/hourly_temperature/hourly_temperature.dart';
 import 'package:corntrack_raspberry_pi_app/screens/manual_upload/manual_upload.dart';
 import 'package:corntrack_raspberry_pi_app/screens/register/register_screen.dart';
@@ -65,6 +68,24 @@ final GoRouter _appRouter = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             final failedUploads = (state.extra as List<FailedUploadData>?) ?? List.empty(); // Adjust type accordingly
             return ManualUploadScreen(failedUploads: failedUploads);
+          },
+        ),
+        GoRoute(
+          path: '/health_status',
+          builder: (BuildContext context, GoRouterState state) {
+            return HealthStatus();
+          },
+        ),
+        GoRoute(
+          path: '/captured_photos',
+          builder: (BuildContext context, GoRouterState state) {
+            return CapturedPhotos();
+          },
+        ),
+        GoRoute(
+          path: '/connection',
+          builder: (BuildContext context, GoRouterState state) {
+            return WifiConnect();
           },
         ),
       ]

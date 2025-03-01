@@ -168,7 +168,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           side: BorderSide(
                                               color: semiBlackColor, width: 1),
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          appRouter.go('/dashboard/connection');
+                                        },
                                         child: Icon(Icons.settings,
                                             size: 24,
                                             color:
@@ -217,7 +219,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             Expanded(
                               child: _buildClickableContainer(
                                 'Captured Photos',
-                                onTap: () {},
+                                onTap: () {
+                                  appRouter.go('/dashboard/captured_photos');
+                                },
                                 margin: _padding8Left,
                                 padding: buttonsPadding,
                                 isCornPot: false,
@@ -229,8 +233,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ),
                             Expanded(
                               child: _buildClickableContainer(
-                                'Disease Detection',
-                                onTap: () {},
+                                'Corn Health Status',
+                                onTap: () {
+                                  appRouter.go('/dashboard/health_status');
+                                },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,
                                 isCornPot: false,

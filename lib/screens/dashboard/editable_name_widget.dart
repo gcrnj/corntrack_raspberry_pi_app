@@ -51,6 +51,9 @@ class _EditableNameWidgetState extends State<EditableNameWidget> {
               ),
               IconButton(
                 onPressed: () {
+                  if(_isEditing) {
+                    widget.onSubmitted(_controller.value.text);
+                  }
                   setState(() {
                     _isEditing = !_isEditing;
                   });

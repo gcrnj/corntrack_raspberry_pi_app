@@ -8,14 +8,14 @@ import 'package:flutter/foundation.dart';
 import '../data/device_details.dart';
 
 class DevicesServicesFactory {
-   static DevicesServices create() {
-     if (kIsWeb) {
-       return DevicesServices(DevicesApi()); // Web should use DummyDeviceApi
-     } else if (Platform.isLinux) {
-       return DevicesServices(DevicesApi());
-     } else {
-       return DevicesServices(DevicesApi());
-     }
+  static DevicesServices create() {
+    if (kIsWeb) {
+      return DevicesServices(DevicesApi()); // Web should use DummyDeviceApi
+    } else if (Platform.isLinux) {
+      return DevicesServices(DevicesApi());
+    } else {
+      return DevicesServices(DevicesApi());
+    }
   }
 }
 
@@ -35,5 +35,12 @@ class DevicesServices {
 
   Future<ApiData<DeviceDetails?>> getDeviceDetails(String deviceId) async {
     return await deviceApi.getDeviceDetails(deviceId);
+  }
+
+  Future<ApiData<DeviceDetails?>> editDeviceName(
+    String deviceId,
+    String newDeviceName,
+  ) async {
+    return await deviceApi.editDeviceName(deviceId, newDeviceName);
   }
 }

@@ -122,8 +122,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     : EditableNameWidget(
                                         text: deviceDetails.deviceName,
                                         onSubmitted: (newValue) {
-                                          print(
-                                              'Device name edited to: $newValue');
+                                          deviceServices.editDeviceName(deviceDetails.deviceId, newValue);
                                         },
                                       ),
                               ),

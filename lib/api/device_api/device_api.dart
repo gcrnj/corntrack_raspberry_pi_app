@@ -9,6 +9,8 @@ abstract class IDeviceApi extends FlaskApi {
   Future<ApiData<String>> registerDevice();
 
   Future<ApiData<DeviceDetails?>> getDeviceDetails(String deviceId);
+
+  Future<ApiData<DeviceDetails?>> editDeviceName(String deviceId, String newDeviceName);
 }
 
 class DevicesApi extends IDeviceApi {
@@ -42,19 +44,44 @@ class DevicesApi extends IDeviceApi {
 
   @override
   Future<ApiData<DeviceDetails?>> getDeviceDetails(String deviceId) async {
+    final url = '$baseUrl/devices/find/$deviceId';
+    print('getDeviceDetails - $url');
     final response = await http.get(
-      Uri.parse('$baseUrl/devices/find/$deviceId'),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       final deviceDetails = DeviceDetails.fromJson(responseJson);
+      print(deviceDetails.deviceName);
       return ApiData.success(data: deviceDetails);
     } else {
       final error = json.decode(response.body)['error'];
+      print(error);
       return ApiData.error(error: error ?? 'Failed to fetch device details.');
     }
   }
+
+  @override
+  Future<ApiData<DeviceDetails?>> editDeviceName(String deviceId, String newDeviceName) async {
+    final url = '$baseUrl/devices/edit/$deviceId';
+    print('editDeviceName - $url');
+    final response = await http.patch(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'deviceName': newDeviceName}),
+    );
+
+    if (response.statusCode == 200) {
+      print('Device name updated successfully');
+      return ApiData.success(data: null);
+    } else {
+      final error = json.decode(response.body)['error'];
+      print(error);
+      return ApiData.error(error: error ?? 'Failed to update device name.');
+    }
+  }
+
 
 }

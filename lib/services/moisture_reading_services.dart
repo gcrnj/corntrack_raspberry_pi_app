@@ -33,7 +33,7 @@ class MoistureReadingService {
 
   Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(
       DateTime start, DateTime end,
-      {required String deviceId, required List<Pots> pots}) async {
+      {required String deviceId, required List<Pots> pots, bool? waterDistributed}) async {
     return moistureReadingApi.getSoilMoistureData(
         start.copyWith(
           hour: 0,
@@ -49,6 +49,7 @@ class MoistureReadingService {
             millisecond: 999,
             microsecond: 999),
         pots: pots.map((pot) => pot.getNumber()).toList(),
-        deviceId: deviceId);
+        deviceId: deviceId,
+    waterDistributed: waterDistributed);
   }
 }

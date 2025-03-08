@@ -40,7 +40,7 @@ enum Pots {
         return 1;
       case Pots.pot2:
         return 2;
-        case Pots.pot3:
+      case Pots.pot3:
         return 3;
     }
   }
@@ -79,7 +79,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   void reloadDeviceDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final deviceDetails = await deviceServices.getDeviceDetails(prefs.getString(PrefKeys.deviceId.name) ?? '');
+    final deviceDetails = await deviceServices
+        .getDeviceDetails(prefs.getString(PrefKeys.deviceId.name) ?? '');
     ref.read(deviceDetailsProvider.notifier).state = deviceDetails.data;
   }
 
@@ -112,7 +113,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 margin: _padding8,
                                 padding: _padding8,
                                 decoration: _containerDecor.copyWith(
-                                  border:  Border.all(
+                                  border: Border.all(
                                     color: semiBlackColor,
                                     width: 2,
                                   ),
@@ -122,7 +123,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     : EditableNameWidget(
                                         text: deviceDetails.deviceName,
                                         onSubmitted: (newValue) {
-                                          deviceServices.editDeviceName(deviceDetails.deviceId, newValue);
+                                          deviceServices.editDeviceName(
+                                              deviceDetails.deviceId, newValue);
                                         },
                                       ),
                               ),
@@ -134,7 +136,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 margin: _padding8,
                                 padding: _padding8,
                                 decoration: _containerDecor.copyWith(
-                                  border:  Border.all(
+                                  border: Border.all(
                                     color: semiBlackColor,
                                     width: 2,
                                   ),
@@ -197,7 +199,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               child: _buildClickableContainer(
                                 'Hourly Temperature',
                                 onTap: () {
-                                  appRouter.go('/dashboard/hourly_temperature', extra: selectedCornPots);
+                                  appRouter.go('/dashboard/hourly_temperature',
+                                      extra: selectedCornPots);
                                 },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,
@@ -256,7 +259,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               child: _buildClickableContainer(
                                 'Water Distribution',
                                 onTap: () {
-                                  appRouter.go('/dashboard/water_distribution', extra: selectedCornPots);
+                                  appRouter.go('/dashboard/water_distribution',
+                                      extra: selectedCornPots);
                                 },
                                 margin: _padding8Left,
                                 padding: buttonsPadding,
@@ -271,7 +275,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               child: _buildClickableContainer(
                                 'Soil Moisture Report',
                                 onTap: () {
-                                  appRouter.go('/dashboard/soil_moisture_report', extra: selectedCornPots);
+                                  appRouter.go(
+                                      '/dashboard/soil_moisture_report',
+                                      extra: selectedCornPots);
                                 },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,
@@ -296,7 +302,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   margin: _padding8,
                   padding: _padding8,
                   decoration: _containerDecor.copyWith(
-                    border:  Border.all(
+                    border: Border.all(
                       color: semiBlackColor,
                       width: 2,
                     ),
@@ -310,7 +316,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       children: [
                         Text(
                           'Failed Uploads',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         Expanded(child: FailedUploadsWidget()),
                       ],
@@ -358,7 +365,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           child: Padding(
             padding: EdgeInsets.only(top: 4),
             child: _buildClickableContainer(Pots.pot3.getName(),
-                onTap: () {},
                 selected: selectedCornPots.contains(Pots.pot3),
                 isCornPot: true,
                 pot: Pots.pot3),
@@ -431,10 +437,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void tapPot(Pots? pot) {
-    final selectedList =
-        List<Pots>.from(ref.read(selectedCornPotProvider)); // Create a new list
+    final selectedList = List<Pots>.from(ref.read(selectedCornPotProvider));
     if (selectedList.contains(pot)) {
-      selectedList.remove(pot);
+      if (selectedList.length > 1) {
+        selectedList.remove(pot);
+      }
     } else if (pot != null) {
       selectedList.add(pot);
     }

@@ -1,10 +1,10 @@
-import 'package:corntrack_raspberry_pi_app/data/water_distribution_data.dart';
+import 'package:corntrack_raspberry_pi_app/data/moisture_reading_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_table_view/material_table_view.dart';
 
 import '../../data/api_data.dart';
-import '../../services/water_distribution_service.dart';
+import '../../services/moisture_reading_services.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../error/error_widget.dart';
 import '../range_date_picker/range_date_picker.dart';
@@ -23,25 +23,31 @@ class _WaterDistributionReportState
     extends ConsumerState<WaterDistributionReport> {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
-  final waterDistributionService = WaterDistributionServiceFactory.create();
-  late final FutureProvider<ApiData<List<WaterDistributionData>>>
-      waterDistributionProvider;
+  final moistureReadingService = MoistureReadingServiceFactory.create();
+  late FutureProvider<ApiData<List<MoistureReadingData>>>
+      moistureReadingProvider;
 
   @override
   void initState() {
-    waterDistributionProvider =
-        FutureProvider<ApiData<List<WaterDistributionData>>>((ref) async {
-      print('Fetching Water Distribution Report from $startDate to $endDate');
-      return await waterDistributionService.getWaterDistributionData(
-          startDate, endDate, widget.selectedCornPots);
+    final deviceDetails = ref.read(deviceDetailsProvider);
+    moistureReadingProvider =
+        FutureProvider<ApiData<List<MoistureReadingData>>>((ref) async {
+      print('Fetching Hourly Temperature from $startDate to $endDate');
+      print(deviceDetails?.deviceId);
+      return await moistureReadingService.getSoilMoistureData(
+        startDate,
+        endDate,
+        pots: widget.selectedCornPots,
+        deviceId: deviceDetails?.deviceId ?? '',
+        waterDistributed: true,
+      );
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final waterData = ref.watch(waterDistributionProvider);
-    print('Water data: ${waterData.value?.data?.length}');
+    final moistureReadingData = ref.watch(moistureReadingProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,8 +65,8 @@ class _WaterDistributionReportState
           Expanded(
             child: SizedBox(
               width: double.infinity,
-              child: waterData.when(
-                data: (ApiData<List<WaterDistributionData>> data) {
+              child: moistureReadingData.when(
+                data: (ApiData<List<MoistureReadingData>> data) {
                   if (data.isSuccess && data.data != null) {
                     return TableView.builder(
                       headerBuilder: (context, contentBuilder) {
@@ -108,7 +114,7 @@ class _WaterDistributionReportState
                                 String text = '';
                                 switch (column) {
                                   case 0:
-                                    text = item.pot;
+                                    text = item.pot.toString();
                                     break;
                                   case 1:
                                     text = item.formattedDate();
@@ -117,10 +123,10 @@ class _WaterDistributionReportState
                                     text = item.formattedTime();
                                     break;
                                   case 3:
-                                    text = item.soilMoisture;
+                                    text = item.moisture.toString();
                                     break;
                                   case 4:
-                                    text = item.temperature ?? '';
+                                    text = item.temperature.toString();
                                     break;
                                 }
                                 return Align(
@@ -144,12 +150,12 @@ class _WaterDistributionReportState
                         child: Text(data.error ?? 'An error occurred'));
                   }
                 },
-                loading: () => CircularProgressIndicator(),
+                loading: () => Center(
+                  child: CircularProgressIndicator(),
+                ),
                 error: (error, stackTrace) => Center(
-                  child: errorWidget(
-                    error.toString(),
-                    onPressed: () => _onDateSelected(startDate, endDate)
-                  ),
+                  child: errorWidget(error.toString(),
+                      onPressed: () => _onDateSelected(startDate, endDate)),
                 ),
               ),
             ),
@@ -163,6 +169,6 @@ class _WaterDistributionReportState
     print('Start Date: $startDate, End Date: $endDate');
     this.startDate = startDate;
     this.endDate = endDate;
-    ref.refresh(waterDistributionProvider.future);
+    ref.refresh(moistureReadingProvider);
   }
 }

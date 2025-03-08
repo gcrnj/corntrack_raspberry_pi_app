@@ -143,11 +143,15 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                       },
                     );
                   } else {
-                    return Center(
-                        child: Text(data.error ?? 'An error occurred'));
+                    return errorWidget(
+                      data.error ?? 'An error occurred',
+                      onPressed: () => _onDateSelected(startDate, endDate),
+                    );
                   }
                 },
-                loading: () => CircularProgressIndicator(),
+                loading: () => Center(
+                  child: CircularProgressIndicator(),
+                ),
                 error: (error, stackTrace) => Center(
                   child: errorWidget(
                     error.toString(),

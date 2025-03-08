@@ -69,7 +69,9 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
   Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(
       DateTime start, DateTime end,
       {required String deviceId,
-      required List<int> pots}) async {
+      required List<int> pots,
+      bool? waterDistributed,
+      }) async {
     return ApiData.success(
         data: [
       MoistureReadingData(

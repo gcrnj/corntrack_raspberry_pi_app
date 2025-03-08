@@ -11,9 +11,8 @@ import '../range_date_picker/range_date_picker.dart';
 
 class SoilMoistureReport extends ConsumerStatefulWidget {
   final List<Pots> selectedCornPots;
-  final String deviceId;
 
-  const SoilMoistureReport({super.key, required this.deviceId, required this.selectedCornPots});
+  const SoilMoistureReport({super.key, required this.selectedCornPots});
 
   @override
   ConsumerState<SoilMoistureReport> createState() => _SoilMoistureReportState();
@@ -28,11 +27,14 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
 
   @override
   void initState() {
+    final deviceDetails = ref.read(deviceDetailsProvider);
     temperatureProvider =
         FutureProvider<ApiData<List<MoistureReadingData>>>((ref) async {
       print('Fetching Soil Moisture Report from $startDate to $endDate');
       return await moistureReadingService.getSoilMoistureData(
-          startDate, endDate, deviceId: widget.deviceId, pots: widget.selectedCornPots);
+          startDate, endDate,
+          deviceId: deviceDetails?.deviceId ?? '',
+          pots: widget.selectedCornPots);
     });
     super.initState();
   }

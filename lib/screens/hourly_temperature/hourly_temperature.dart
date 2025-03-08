@@ -12,10 +12,9 @@ import '../../data/hourly_temperature_data.dart';
 import '../error/error_widget.dart';
 
 class HourlyTemperature extends ConsumerStatefulWidget {
-  final String deviceId;
   final List<Pots> selectedPots;
 
-  const HourlyTemperature({super.key,required this.deviceId, required this.selectedPots});
+  const HourlyTemperature({super.key, required this.selectedPots});
 
   @override
   ConsumerState<HourlyTemperature> createState() => _HourlyTemperatureState();
@@ -42,6 +41,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
 
   @override
   void initState() {
+    final deviceDetails = ref.read(deviceDetailsProvider);
     temperatureProvider =
         FutureProvider<ApiData<List<MoistureReadingData>>>((ref) async {
       print('Fetching Hourly Temperature from $startDate to $endDate');
@@ -49,7 +49,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
         startDate,
         endDate,
         pots: widget.selectedPots,
-        deviceId: widget.deviceId,
+        deviceId: deviceDetails?.deviceId ?? '',
       );
     });
     super.initState();

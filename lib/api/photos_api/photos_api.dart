@@ -17,11 +17,10 @@ class PhotosApi extends IPhotosApi {
   Future<ApiData<List<PhotosData>>> getAll(String deviceId)  async {
     try {
       // Construct the URL for the GET request.
-      final client = http.Client();
       final url = Uri.parse('$baseUrl/photos/$deviceId');
       print("Getting $url");
       // Make the GET request.
-      final response = await client.get(url);
+      final response = await http.get(url);
       print("response = $response");
 
       // Check if the request was successful.

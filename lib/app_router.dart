@@ -46,14 +46,22 @@ final GoRouter _appRouter = GoRouter(
         GoRoute(
           path: '/hourly_temperature',
           builder: (BuildContext context, GoRouterState state) {
-            return HourlyTemperature();
+            final extras = state.extra as Map<dynamic, dynamic>;
+            final deviceId = extras['deviceId'] as String;
+            final selectedCornPots = extras['selectedCornPots'] as List<Pots>;
+            return HourlyTemperature(
+              deviceId: deviceId,
+              selectedPots: selectedCornPots,
+            );
           },
         ),
         GoRoute(
           path: '/soil_moisture_report',
           builder: (BuildContext context, GoRouterState state) {
-            final selectedCornPots = (state.extra as List<Pots>?) ?? List.empty(); // Adjust type accordingly
-            return SoilMoistureReport(selectedCornPots: selectedCornPots);
+            final extras = state.extra as Map<dynamic, dynamic>;
+            final deviceId = extras['deviceId'] as String;
+            final selectedCornPots = extras['selectedCornPots'] as List<Pots>;
+            return SoilMoistureReport(deviceId: deviceId, selectedCornPots: selectedCornPots);
           },
         ),
         GoRoute(

@@ -13,7 +13,7 @@ class HourlyTemperatureData {
   factory HourlyTemperatureData.fromJson(Map<String, dynamic> json) {
     return HourlyTemperatureData(
       temperature: json['temperature'] as String,
-      dateTime: DateTime.parse(json['dateTime'] as String),
+      dateTime: DateTime.parse(json['time'] as String),
     );
   }
 

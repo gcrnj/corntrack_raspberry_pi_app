@@ -197,7 +197,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               child: _buildClickableContainer(
                                 'Hourly Temperature',
                                 onTap: () {
-                                  appRouter.go('/dashboard/hourly_temperature');
+                                  final extras = {
+                                    'selectedCornPots': selectedCornPots,
+                                    'deviceId': deviceDetails?.deviceId,
+                                  };
+                                  appRouter.go('/dashboard/hourly_temperature', extra: extras);
                                 },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,

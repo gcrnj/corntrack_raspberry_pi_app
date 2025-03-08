@@ -1,25 +1,25 @@
 import 'package:intl/intl.dart';
 
 class MoistureReadingData {
-  final String moisture;
-  final String pot;
+  final double moisture;
+  final int pot;
   final DateTime dateTime;
-  final String? temperature;
+  final double temperature;
 
   MoistureReadingData({
     required this.moisture,
     required this.pot,
     required this.dateTime,
-    this.temperature,
+    required this.temperature,
   });
 
   // Factory constructor for creating a new MoistureReadingData instance from a map.
   factory MoistureReadingData.fromJson(Map<String, dynamic> json) {
     return MoistureReadingData(
-      moisture: json['moisture'] as String,
-      pot: json['pot'] as String,
-      dateTime: DateTime.parse(json['dateTime'] as String),
-      temperature: json['temperature'] as String?,
+      moisture: json['moisture'] as double,
+      pot: json['pot'] as int,
+      dateTime: DateTime.parse(json['time'] as String).toLocal(), // Convert to UTC
+      temperature: json['temperature'] as double,
     );
   }
 
@@ -28,7 +28,7 @@ class MoistureReadingData {
     return {
       'moisture': moisture,
       'pot': pot,
-      'dateTime': dateTime.toIso8601String(),
+      'time': dateTime.toIso8601String(),
       'temperature': temperature,
     };
   }

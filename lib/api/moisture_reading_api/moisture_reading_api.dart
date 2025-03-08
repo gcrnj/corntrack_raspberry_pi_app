@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:corntrack_raspberry_pi_app/api/flask_api.dart';
@@ -11,9 +10,19 @@ import 'package:http/http.dart' as http;
 
 abstract class IMoistureReadingApi extends FlaskApi {
   Future<ApiData<List<MoistureReadingData>>> getAll();
-  Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(DateTime start, DateTime end);
-  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end, List<Pots> selectedCornPots);
 
+  Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(
+    DateTime start,
+    DateTime end, {
+        required String deviceId,
+    required List<int> pots,
+  });
+
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(
+      DateTime start, DateTime end, {
+        required String deviceId,
+        required List<int> pots,
+      });
 }
 
 class MoistureReadingApi extends IMoistureReadingApi {
@@ -32,15 +41,23 @@ class MoistureReadingApi extends IMoistureReadingApi {
       return ApiData.success(data: readings);
     } else {
       final error = json.decode(response.body)['error'];
-      return ApiData.error(error: error ?? 'Failed to fetch moisture readings.');
+      return ApiData.error(
+          error: error ?? 'Failed to fetch moisture readings.');
     }
   }
 
   @override
   Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(
-      DateTime start, DateTime end) async {
+    DateTime start,
+    DateTime end, {
+      required String deviceId,
+    required List<int> pots,
+  }) async {
+    final potsQuery = pots.map((pot) => 'pots=$pot').join('&');
+
     final response = await http.get(
-      Uri.parse('$baseUrl/temperature/hourly?start=${start.toIso8601String()}&end=${end.toIso8601String()}'),
+      Uri.parse(
+          '$baseUrl/devices/$deviceId/hourly?start=${start.toIso8601String()}&end=${end.toIso8601String()}&$potsQuery'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -58,10 +75,17 @@ class MoistureReadingApi extends IMoistureReadingApi {
 
   @override
   Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(
-      DateTime start, DateTime end, List<Pots> selectedCornPots) async {
-    final potIds = selectedCornPots.map((pot) => pot.getNumber()).join(',');
+      DateTime start, DateTime end, {
+        required String deviceId,
+        required List<int> pots,
+      }) async {
+
+    // Convert pots list into query parameters
+    final potsQuery = pots.map((pot) => 'pots=$pot').join('&');
+
     final response = await http.get(
-      Uri.parse('$baseUrl/moisture_readings?start=${start.toIso8601String()}&end=${end.toIso8601String()}&pots=$potIds'),
+      Uri.parse(
+          '$baseUrl/devices/$deviceId/soil_moisture?start=${start.toIso8601String()}&end=${end.toIso8601String()}&$potsQuery'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -70,10 +94,12 @@ class MoistureReadingApi extends IMoistureReadingApi {
       final moistureData = responseJson
           .map((json) => MoistureReadingData.fromJson(json))
           .toList();
+      print(moistureData.first.dateTime);
       return ApiData.success(data: moistureData);
     } else {
       final error = json.decode(response.body)['error'];
-      return ApiData.error(error: error ?? 'Failed to fetch soil moisture data.');
+      return ApiData.error(
+          error: error ?? 'Failed to fetch soil moisture data.');
     }
   }
 

@@ -5,7 +5,7 @@ Widget errorWidget(String error, {VoidCallback? onPressed}) {
     children: [
       Text('Error: $error'),
       ElevatedButton(
-        onPressed: () => onPressed,
+        onPressed: onPressed,
         child: Text('Retry'),
       ),
     ],

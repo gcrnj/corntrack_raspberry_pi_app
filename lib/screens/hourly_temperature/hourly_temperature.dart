@@ -1,4 +1,6 @@
 import 'package:corntrack_raspberry_pi_app/data/api_data.dart';
+import 'package:corntrack_raspberry_pi_app/data/moisture_reading_data.dart';
+import 'package:corntrack_raspberry_pi_app/screens/dashboard/dashboard_screen.dart';
 import 'package:corntrack_raspberry_pi_app/screens/range_date_picker/range_date_picker.dart';
 import 'package:corntrack_raspberry_pi_app/services/moisture_reading_services.dart';
 import 'package:flutter/material.dart';
@@ -10,26 +12,45 @@ import '../../data/hourly_temperature_data.dart';
 import '../error/error_widget.dart';
 
 class HourlyTemperature extends ConsumerStatefulWidget {
-  const HourlyTemperature({super.key});
+  final String deviceId;
+  final List<Pots> selectedPots;
+
+  const HourlyTemperature({super.key,required this.deviceId, required this.selectedPots});
 
   @override
   ConsumerState<HourlyTemperature> createState() => _HourlyTemperatureState();
 }
 
 class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
+  DateTime startDate = DateTime.now().copyWith(
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+    microsecond: 0,
+  );
+  DateTime endDate = DateTime.now().copyWith(
+    hour: 23,
+    minute: 59,
+    second: 59,
+    millisecond: 999,
+    microsecond: 999,
+  );
   final moistureReadingService = MoistureReadingServiceFactory.create();
-  late final FutureProvider<ApiData<List<HourlyTemperatureData>>>
+  late final FutureProvider<ApiData<List<MoistureReadingData>>>
       temperatureProvider;
 
   @override
   void initState() {
     temperatureProvider =
-        FutureProvider<ApiData<List<HourlyTemperatureData>>>((ref) async {
+        FutureProvider<ApiData<List<MoistureReadingData>>>((ref) async {
       print('Fetching Hourly Temperature from $startDate to $endDate');
-      return await moistureReadingService.getHourlyTemperature(
-          startDate, endDate);
+      return await moistureReadingService.getSoilMoistureData(
+        startDate,
+        endDate,
+        pots: widget.selectedPots,
+        deviceId: widget.deviceId,
+      );
     });
     super.initState();
   }
@@ -57,7 +78,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
             child: SizedBox(
               width: double.infinity,
               child: temperatureData.when(
-                data: (ApiData<List<HourlyTemperatureData>> data) {
+                data: (ApiData<List<MoistureReadingData>> data) {
                   if (data.isSuccess && data.data != null) {
                     return TableView.builder(
                       // Add Header
@@ -112,7 +133,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                                   case 1:
                                     text = item.formattedTime();
                                   case 2:
-                                    text = item.temperature;
+                                    text = item.temperature.toString();
                                 }
                                 return Align(
                                   alignment: Alignment.center,
@@ -133,7 +154,9 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                 error: (error, stackTrace) => Center(
                   child: errorWidget(
                     error.toString(),
-                    onPressed: () => _onDateSelected(startDate, endDate),
+                    onPressed: () {
+                      print(error.toString());
+                      _onDateSelected(startDate, endDate);},
                   ),
                 ),
               ),

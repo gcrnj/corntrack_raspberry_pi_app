@@ -13,7 +13,7 @@ import '../screens/dashboard/dashboard_screen.dart';
 class MoistureReadingServiceFactory {
   static MoistureReadingService create() {
     if (kIsWeb) {
-      return MoistureReadingService(DummyMoistureReadingApi());
+      return MoistureReadingService(MoistureReadingApi());
     } else if (Platform.isLinux) {
       return MoistureReadingService(MoistureReadingApi());
     } else {
@@ -31,11 +31,24 @@ class MoistureReadingService {
     return moistureReadingApi.getAll();
   }
 
-  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end, List<Pots> selectedCornPots) async {
-    return moistureReadingApi.getSoilMoistureData(start, end, selectedCornPots);
-  }
-
-  Future<ApiData<List<HourlyTemperatureData>>> getHourlyTemperature(DateTime start, DateTime end) async {
-    return moistureReadingApi.getHourlyTemperature(start, end);
+  Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(
+      DateTime start, DateTime end,
+      {required String deviceId, required List<Pots> pots}) async {
+    return moistureReadingApi.getSoilMoistureData(
+        start.copyWith(
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+          microsecond: 0,
+        ),
+        end.copyWith(
+            hour: 23,
+            minute: 59,
+            second: 59,
+            millisecond: 999,
+            microsecond: 999),
+        pots: pots.map((pot) => pot.getNumber()).toList(),
+        deviceId: deviceId);
   }
 }

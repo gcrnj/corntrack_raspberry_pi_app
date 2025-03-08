@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../../services/failed_upload_service.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../error/error_widget.dart';
 
 class FailedUploadsWidget extends ConsumerStatefulWidget {
   const FailedUploadsWidget({super.key});
@@ -39,11 +40,9 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
       data: (data) {
         final failedUploads = data.data ?? List.empty();
 
-        if(failedUploads.isEmpty) {
+        if (failedUploads.isEmpty) {
           return Column(
-            children: [
-              Text("You're all set!")
-            ],
+            children: [Text("You're all set!")],
           );
         }
         print('data ${failedUploads.length}');
@@ -79,7 +78,6 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         _FailedUploadsList(
                           isImage: true,
                           datedFailedData: groupFailedUploadsByDate(
@@ -126,24 +124,17 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
       },
       error: (error, stackTrace) {
         print('error');
-        return Center(child: errorWidget(error.toString()));
+        return Center(
+          child: errorWidget(
+            error.toString(),
+            onPressed: () => ref.refresh(failedUploadsProvider.future),
+          ),
+        );
       },
       loading: () {
         print('loading');
         return Center(child: CircularProgressIndicator());
       },
-    );
-  }
-
-  Widget errorWidget(String error) {
-    return Column(
-      children: [
-        Text('Error: $error'),
-        ElevatedButton(
-          onPressed: () => ref.refresh(failedUploadsProvider.future),
-          child: Text('Retry'),
-        ),
-      ],
     );
   }
 
@@ -216,7 +207,8 @@ class _FailedUploadsList extends StatelessWidget {
   final String? header;
   final bool isImage;
 
-  const _FailedUploadsList({required this.datedFailedData, this.header, this.isImage = false});
+  const _FailedUploadsList(
+      {required this.datedFailedData, this.header, this.isImage = false});
 
   @override
   Widget build(BuildContext context) {
@@ -252,11 +244,13 @@ class _FailedUploadsList extends StatelessWidget {
                     ),
 
                     // List of failed non-images for this date
-                    ...entry.value.map((data) =>  isImage ? Image.network(data.image ?? ''):  ListTile(
-                          leading: Icon(Icons.arrow_forward_ios_rounded),
-                          title: Text(data.dataType
-                              .getDisplayName()), // Customize based on data properties
-                        )),
+                    ...entry.value.map((data) => isImage
+                        ? Image.network(data.image ?? '')
+                        : ListTile(
+                            leading: Icon(Icons.arrow_forward_ios_rounded),
+                            title: Text(data.dataType
+                                .getDisplayName()), // Customize based on data properties
+                          )),
                   ],
                 );
               }),

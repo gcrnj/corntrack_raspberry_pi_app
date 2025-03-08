@@ -10,11 +10,11 @@ import '../data/device_details.dart';
 class DevicesServicesFactory {
    static DevicesServices create() {
      if (kIsWeb) {
-       return DevicesServices(DummyDeviceApi()); // Web should use DummyDeviceApi
+       return DevicesServices(DevicesApi()); // Web should use DummyDeviceApi
      } else if (Platform.isLinux) {
        return DevicesServices(DevicesApi());
      } else {
-       return DevicesServices(DummyDeviceApi());
+       return DevicesServices(DevicesApi());
      }
   }
 }

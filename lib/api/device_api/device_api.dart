@@ -14,9 +14,11 @@ abstract class IDeviceApi extends FlaskApi {
 class DevicesApi extends IDeviceApi {
   @override
   Future<ApiData<String>> registerDevice() async {
+    final url = '$baseUrl/devices/register';
+    print('Registering device: $url');
     // Sending POST request to Firestore
     final response = await http.post(
-      Uri.parse(baseUrl),
+      Uri.parse(url),
       headers: {
         'Content-Type': 'application/json', // Important to specify content type
       },
@@ -25,8 +27,8 @@ class DevicesApi extends IDeviceApi {
     final responseBody = response.body;
     if (responseBody.isNotEmpty) {
       final responseJson = json.decode(responseBody);
-      String? deviceId = responseJson.get('deviceId')?.toString();
-      String? error = responseJson.get('error')?.toString();
+      String? deviceId = responseJson['device_id']?.toString();
+      String? error = responseJson['error']?.toString();
       if (deviceId != null && deviceId.isNotEmpty) {
         return ApiData.success(data: deviceId);
       } else {
@@ -39,8 +41,20 @@ class DevicesApi extends IDeviceApi {
   }
 
   @override
-  Future<ApiData<DeviceDetails?>> getDeviceDetails(String deviceId) {
-    // TODO: implement getDeviceDetails
-    throw UnimplementedError();
+  Future<ApiData<DeviceDetails?>> getDeviceDetails(String deviceId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/devices/find/$deviceId'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      final deviceDetails = DeviceDetails.fromJson(responseJson);
+      return ApiData.success(data: deviceDetails);
+    } else {
+      final error = json.decode(response.body)['error'];
+      return ApiData.error(error: error ?? 'Failed to fetch device details.');
+    }
   }
+
 }

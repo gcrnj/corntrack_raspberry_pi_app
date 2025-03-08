@@ -6,6 +6,7 @@ import 'package:material_table_view/material_table_view.dart';
 import '../../data/api_data.dart';
 import '../../services/water_distribution_service.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../error/error_widget.dart';
 import '../range_date_picker/range_date_picker.dart';
 
 class WaterDistributionReport extends ConsumerStatefulWidget {
@@ -14,23 +15,26 @@ class WaterDistributionReport extends ConsumerStatefulWidget {
   const WaterDistributionReport({super.key, required this.selectedCornPots});
 
   @override
-  ConsumerState<WaterDistributionReport> createState() => _WaterDistributionReportState();
+  ConsumerState<WaterDistributionReport> createState() =>
+      _WaterDistributionReportState();
 }
 
-class _WaterDistributionReportState extends ConsumerState<WaterDistributionReport> {
+class _WaterDistributionReportState
+    extends ConsumerState<WaterDistributionReport> {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
   final waterDistributionService = WaterDistributionServiceFactory.create();
-  late final FutureProvider<ApiData<List<WaterDistributionData>>> waterDistributionProvider;
+  late final FutureProvider<ApiData<List<WaterDistributionData>>>
+      waterDistributionProvider;
 
   @override
   void initState() {
     waterDistributionProvider =
         FutureProvider<ApiData<List<WaterDistributionData>>>((ref) async {
-          print('Fetching Water Distribution Report from $startDate to $endDate');
-          return await waterDistributionService.getWaterDistributionData(
-              startDate, endDate, widget.selectedCornPots);
-        });
+      print('Fetching Water Distribution Report from $startDate to $endDate');
+      return await waterDistributionService.getWaterDistributionData(
+          startDate, endDate, widget.selectedCornPots);
+    });
     super.initState();
   }
 
@@ -64,7 +68,7 @@ class _WaterDistributionReportState extends ConsumerState<WaterDistributionRepor
                           color: Colors.blueGrey[100]!,
                           child: contentBuilder(
                             context,
-                                (context, column) {
+                            (context, column) {
                               const headers = {
                                 0: "Pot",
                                 1: "Date",
@@ -100,7 +104,7 @@ class _WaterDistributionReportState extends ConsumerState<WaterDistributionRepor
                             onTap: () => print('Row $row clicked'),
                             child: contentBuilder(
                               context,
-                                  (context, column) {
+                              (context, column) {
                                 String text = '';
                                 switch (column) {
                                   case 0:
@@ -124,7 +128,9 @@ class _WaterDistributionReportState extends ConsumerState<WaterDistributionRepor
                                   child: Text(
                                     text,
                                     style: TextStyle(
-                                        fontSize: column == 0 || column == 3 ? 20 : null),
+                                        fontSize: column == 0 || column == 3
+                                            ? 20
+                                            : null),
                                   ),
                                 );
                               },
@@ -134,11 +140,17 @@ class _WaterDistributionReportState extends ConsumerState<WaterDistributionRepor
                       },
                     );
                   } else {
-                    return Center(child: Text(data.error ?? 'An error occurred'));
+                    return Center(
+                        child: Text(data.error ?? 'An error occurred'));
                   }
                 },
                 loading: () => CircularProgressIndicator(),
-                error: (error, stackTrace) => Center(child: errorWidget(error.toString())),
+                error: (error, stackTrace) => Center(
+                  child: errorWidget(
+                    error.toString(),
+                    onPressed: () => _onDateSelected(startDate, endDate)
+                  ),
+                ),
               ),
             ),
           ),
@@ -152,17 +164,5 @@ class _WaterDistributionReportState extends ConsumerState<WaterDistributionRepor
     this.startDate = startDate;
     this.endDate = endDate;
     ref.refresh(waterDistributionProvider.future);
-  }
-
-  Widget errorWidget(String error) {
-    return Column(
-      children: [
-        Text('Error: $error'),
-        ElevatedButton(
-          onPressed: () => _onDateSelected(startDate, endDate),
-          child: Text('Retry'),
-        ),
-      ],
-    );
   }
 }

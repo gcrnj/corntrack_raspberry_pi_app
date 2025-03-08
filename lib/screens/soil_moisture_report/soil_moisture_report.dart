@@ -6,10 +6,10 @@ import 'package:material_table_view/material_table_view.dart';
 import '../../data/api_data.dart';
 import '../../services/moisture_reading_services.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../error/error_widget.dart';
 import '../range_date_picker/range_date_picker.dart';
 
 class SoilMoistureReport extends ConsumerStatefulWidget {
-
   final List<Pots> selectedCornPots;
 
   const SoilMoistureReport({super.key, required this.selectedCornPots});
@@ -145,8 +145,12 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                   }
                 },
                 loading: () => CircularProgressIndicator(),
-                error: (error, stackTrace) =>
-                    Center(child: errorWidget(error.toString())),
+                error: (error, stackTrace) => Center(
+                  child: errorWidget(
+                    error.toString(),
+                    onPressed: () => _onDateSelected(startDate, endDate),
+                  ),
+                ),
               ),
             ),
           ),
@@ -160,17 +164,5 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
     this.startDate = startDate;
     this.endDate = endDate;
     ref.refresh(temperatureProvider.future);
-  }
-
-  Widget errorWidget(String error) {
-    return Column(
-      children: [
-        Text('Error: $error'),
-        ElevatedButton(
-          onPressed: () => _onDateSelected(startDate, endDate),
-          child: Text('Retry'),
-        ),
-      ],
-    );
   }
 }

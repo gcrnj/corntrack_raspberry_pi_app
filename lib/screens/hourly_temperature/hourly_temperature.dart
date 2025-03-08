@@ -7,6 +7,7 @@ import 'package:material_table_view/material_table_view.dart';
 import 'package:material_table_view/table_view_typedefs.dart';
 
 import '../../data/hourly_temperature_data.dart';
+import '../error/error_widget.dart';
 
 class HourlyTemperature extends ConsumerStatefulWidget {
   const HourlyTemperature({super.key});
@@ -129,8 +130,12 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                   }
                 },
                 loading: () => CircularProgressIndicator(),
-                error: (error, stackTrace) =>
-                    Center(child: errorWidget(error.toString())),
+                error: (error, stackTrace) => Center(
+                  child: errorWidget(
+                    error.toString(),
+                    onPressed: () => _onDateSelected(startDate, endDate),
+                  ),
+                ),
               ),
             ),
           ),
@@ -144,17 +149,5 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
     this.startDate = startDate;
     this.endDate = endDate;
     ref.refresh(temperatureProvider.future);
-  }
-
-  Widget errorWidget(String error) {
-    return Column(
-      children: [
-        Text('Error: $error'),
-        ElevatedButton(
-          onPressed: () => _onDateSelected(startDate, endDate),
-          child: Text('Retry'),
-        ),
-      ],
-    );
   }
 }

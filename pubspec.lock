@@ -131,7 +131,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: d61c8c592c0d55c1b4727eeacd7045fbf4d261cc
+      resolved-ref: "644de4074661802d86a307480a89b8f064b06947"
       url: "https://github.com/gcrnj/corntrack_utils"
     source: git
     version: "1.0.0+1"

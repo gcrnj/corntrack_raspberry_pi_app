@@ -7,10 +7,6 @@ import '../../screens/dashboard/dashboard_screen.dart';
 import 'moisture_reading_api.dart';
 
 class DummyMoistureReadingApi extends IMoistureReadingApi {
-  @override
-  Future<ApiData<bool>> add(Map<dynamic, dynamic> body) async {
-    return ApiData.success(data: true);
-  }
 
   @override
   Future<ApiData<List<MoistureReadingData>>> getAll() async {

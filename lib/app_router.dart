@@ -79,8 +79,17 @@ final GoRouter _appRouter = GoRouter(
         GoRoute(
           path: '/captured_photos',
           builder: (BuildContext context, GoRouterState state) {
-            return CapturedPhotos();
+            return CapturedPhotos(url: "03-03-25/drop.png");
           },
+          routes: [
+            GoRoute(
+              path: '/photo_details',
+              builder: (BuildContext context, GoRouterState state) {
+                final url = (state.extra as String?) ?? ''; // Adjust type accordingly
+                return CapturedPhotos(url: url);
+              },
+            ),
+          ]
         ),
         GoRoute(
           path: '/connection',

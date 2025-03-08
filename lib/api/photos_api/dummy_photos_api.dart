@@ -5,9 +5,8 @@ import 'package:corntrack_raspberry_pi_app/data/photos_data.dart';
 
 class DummyPhotosApi extends IPhotosApi {
   @override
-  Future<ApiData<List<PhotosData>>> getAll() {
-    // TODO: implement getAll
-    throw UnimplementedError();
+  Future<ApiData<List<PhotosData>>> getAll(String deviceId) async {
+    return ApiData.success(data: List<PhotosData>.empty());
   }
 
 }

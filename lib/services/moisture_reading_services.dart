@@ -31,10 +31,6 @@ class MoistureReadingService {
     return moistureReadingApi.getAll();
   }
 
-  Future<ApiData<bool>> add(Map<dynamic, dynamic> body) async {
-    return moistureReadingApi.add(body);
-  }
-
   Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(DateTime start, DateTime end, List<Pots> selectedCornPots) async {
     return moistureReadingApi.getSoilMoistureData(start, end, selectedCornPots);
   }

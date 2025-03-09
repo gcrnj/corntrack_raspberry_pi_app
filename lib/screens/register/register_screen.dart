@@ -34,16 +34,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(isLoading
-                    ? 'Registering this device...'
-                    : (registeredDeviceData?.error ?? 'Device failed to register. Please contact the developers.')),
-                FilledButton(
-                  onPressed: isLoading ? null : checkRegistration,
-                  child: isLoading ? CircularProgressIndicator() : Text('Retry'),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  Text(isLoading
+                      ? 'Registering this device...'
+                      : (registeredDeviceData?.error ?? 'Device failed to register. Please contact the developers.')),
+                  FilledButton(
+                    onPressed: isLoading ? null : checkRegistration,
+                    child: isLoading ? CircularProgressIndicator() : Text('Retry'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

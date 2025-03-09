@@ -5,7 +5,6 @@ import 'package:corntrack_utils/utils/string_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:html' as html;
 
 import '../../data/api_data.dart';
 import '../../data/moisture_reading_data.dart';

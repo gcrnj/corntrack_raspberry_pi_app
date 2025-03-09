@@ -5,6 +5,7 @@ import 'package:corntrack_utils/utils/string_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:html' as html;
 
 import '../../data/api_data.dart';
 import '../../data/moisture_reading_data.dart';
@@ -35,7 +36,6 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         ref.read(deviceIdProvider.notifier).state = prefs.getString(PrefKeys.deviceId.name) ?? '';
       }
-
       print("Getting captured photos with deviceId=$deviceId");
       final apiData = await photoService.getAll(deviceId ?? '');
       print("Result of captured photos = ${apiData.isSuccess} - ${apiData.error} - ${apiData.data?.length}");
@@ -71,6 +71,9 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
         itemCount: urls.length,
         itemBuilder: (context, index) {
           String currentPath = urls.elementAt(index).path ?? '';
+          // final imageUrl = baseFirebaseStorageUrl + currentPath;
+          final imageUrl = 'https://storage.googleapis.com/project-corntrack.firebasestorage.app/gallery.png?Expires=1741585390&GoogleAccessId=firebase-adminsdk-fbsvc%40project-corntrack.iam.gserviceaccount.com&Signature=YXXfzgxIL6R0BSq5F0c4CDj42GZbqlXE1ISoLzSYf%2B2r0tKUCzaQgAqglrpSd%2FVTe39mIT6nDtwx8cUyt2puD0WWB3gnJkuOqdF4yESHMia3gQeKhtGmjtfV8F546y6%2BNxZoAk8N1cbZWAgybSLC2ljy8nRCyMrnFFSXC4%2Faa4x7hKCLDjIkqxzOt9hRLl4YweVx57af4TUdVSVznVV%2FwTzXNTuILgm644rTbfUG0zJr5w0ujFpCXW7Wuhku%2BvOq%2Fwnlbm%2FBCpSwG%2FR8IeDsVgMHD8EOQiriTrBZeT7c3mEcTo%2BeN4USlQAGLbKvQzfBz6l8lBDmWAN1Q8c80WxmnQ%3D%3D';
+          print(imageUrl);
           return InkWell(
             onTap: () {
               appRouter.go('/dashboard/captured_photos/photo_details',
@@ -79,8 +82,7 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                baseFirebaseStorageUrl + currentPath,
-                fit: BoxFit.cover,
+                imageUrl,
               ),
             ),
           );
@@ -97,31 +99,35 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
       );
     });
   }
-
   Widget photoDetailsView() {
-    String path = imageUrl(widget.url!);
-    print(path);
+    String path = widget.url!;  // Use the original URL
+    print('Path: $path');
+
     return Column(
       children: [
-        Text('Url: $path'),
+        Text('Url: \t\t$path'),
         Image.network(
-          path, // Ensure proper URL formatting
+          path,  // DO NOT encode again!
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child; // Image fully loaded
-
+            if (loadingProgress == null) return child;
             return Center(
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                    : null, // If total bytes are unknown, show an indeterminate progress
+                    : null,
               ),
             );
           },
-        )
+          errorBuilder: (context, error, stackTrace) {
+            print('Error: $error');
+            return Text("Failed to load image");
+          },
+        ),
       ],
     );
   }
+
 
   String imageUrl(String path) {
     String codedPath = path.replaceAll('/', '%2F'); // Ensures proper encoding

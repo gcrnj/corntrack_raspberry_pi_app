@@ -30,7 +30,11 @@ class DevicesServices {
   /// /devices/register
   Future<ApiData<String?>> registerDevice() async {
     // Firebase Firestore endpoint URL
-    return await deviceApi.registerDevice();
+    try {
+      return await deviceApi.registerDevice();
+    } catch (e) {
+      return ApiData.error(error: e.toString());
+    }
   }
 
   Future<ApiData<DeviceDetails?>> getDeviceDetails(String deviceId) async {

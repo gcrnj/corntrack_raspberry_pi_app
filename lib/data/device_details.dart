@@ -1,7 +1,7 @@
 class DeviceDetails {
   final String deviceId;
   final String deviceName;
-  final String ownerId;
+  final List<String> ownerId;
 
   DeviceDetails({required this.deviceId, required this.deviceName, required this.ownerId});
 
@@ -10,7 +10,9 @@ class DeviceDetails {
     return DeviceDetails(
       deviceId: json['device_id'] as String,
       deviceName: json['deviceName'] as String,
-      ownerId: json['ownerId'] as String,
+      ownerId: (json['ownerId'] as List<dynamic>?)
+          ?.map((e) => e.toString()) // Ensure all elements are Strings
+          .toList() ?? [],
     );
   }
 

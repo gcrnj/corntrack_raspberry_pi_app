@@ -9,11 +9,11 @@ import '../data/failed_upload_data.dart';
 class FailedUploadServiceFactory {
   static FailedUploadService create() {
     if (kIsWeb) {
-      return FailedUploadService(DummyFailedUploadApi());
+      return FailedUploadService(FailedUploadApi());
     } else if (Platform.isLinux) {
       return FailedUploadService(FailedUploadApi());
     } else {
-      return FailedUploadService(DummyFailedUploadApi());
+      return FailedUploadService(FailedUploadApi());
     }
   }
 }
@@ -23,12 +23,23 @@ class FailedUploadService {
 
   FailedUploadService(this.failedUploadApi);
 
-  Future<ApiData<List<FailedUploadData>>> getAllFailedUploads() async {
-    await Future.delayed(Duration(seconds: 3));
-    return failedUploadApi.getAllFailedUploads();
+  Future<ApiData<List<FailedUploadData>>> getAllFailedUploads(
+    String? deviceId,
+  ) async {
+    try {
+      print("trying getAllFailedUploads");
+      return failedUploadApi.getAllFailedUploads(deviceId);
+    } catch (e) {
+      print("error in getAllFailedUploads");
+      return ApiData.error(error: e.toString());
+    }
   }
 
-  Future<ApiData<bool>> addFailedUpload(FailedUploadData data) async {
-    return failedUploadApi.addFailedUpload(data);
+  Future<ApiData<String>> manualUpload(String deviceId) async {
+    try {
+      return await failedUploadApi.manualUpload(deviceId);
+    } catch (e) {
+      return ApiData.error(error: e.toString());
+    }
   }
 }

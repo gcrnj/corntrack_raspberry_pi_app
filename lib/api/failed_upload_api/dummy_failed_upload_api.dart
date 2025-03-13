@@ -8,7 +8,7 @@ class DummyFailedUploadApi extends IFailedUploadApi {
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 2)),
       image: 'image_2.png',
-      dataType: FailedUploadDataType.image,
+      dataType: FailedUploadDataType.photo,
     ),
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 1)),
@@ -33,7 +33,7 @@ class DummyFailedUploadApi extends IFailedUploadApi {
   ];
 
   @override
-  Future<ApiData<List<FailedUploadData>>> getAllFailedUploads() async {
+  Future<ApiData<List<FailedUploadData>>> getAllFailedUploads(String? deviceId) async {
     return ApiData.success(data: List.empty());
     return ApiData.success(data: _dummyData);
   }
@@ -42,5 +42,10 @@ class DummyFailedUploadApi extends IFailedUploadApi {
   Future<ApiData<bool>> addFailedUpload(FailedUploadData data) async {
     _dummyData.add(data);
     return ApiData.success(data: true);
+  }
+
+  @override
+  Future<ApiData<String>> manualUpload(String deviceId) async {
+    return ApiData.success(data: 'success');
   }
 }

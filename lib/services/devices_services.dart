@@ -38,7 +38,11 @@ class DevicesServices {
   }
 
   Future<ApiData<DeviceDetails?>> getDeviceDetails(String deviceId) async {
-    return await deviceApi.getDeviceDetails(deviceId);
+    try {
+      return await deviceApi.getDeviceDetails(deviceId);
+    } catch (e) {
+      return ApiData.error(error: e.toString());
+    }
   }
 
   Future<ApiData<DeviceDetails?>> editDeviceName(

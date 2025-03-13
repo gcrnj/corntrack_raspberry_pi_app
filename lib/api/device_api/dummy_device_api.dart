@@ -15,7 +15,7 @@ class DummyDeviceApi extends IDeviceApi {
       data: DeviceDetails(
         deviceId: '2bhE03Y9sc4rUHtj4hcy',
         deviceName: 'Device Name',
-        ownerId: 'abc',
+        ownerId: ['abc'],
       ),
     );
   }

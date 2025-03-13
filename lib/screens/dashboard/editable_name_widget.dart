@@ -1,10 +1,12 @@
+import 'package:corntrack_raspberry_pi_app/app_router.dart';
 import 'package:flutter/material.dart';
 
 class EditableNameWidget extends StatefulWidget {
   final String text;
   final ValueChanged<String> onSubmitted;
+  final String deviceId;
 
-  const EditableNameWidget({super.key, required this.text, required this.onSubmitted});
+  const EditableNameWidget({super.key, required this.text, required this.onSubmitted, required this.deviceId});
 
   @override
   State<EditableNameWidget> createState() => _EditableNameWidgetState();
@@ -46,7 +48,9 @@ class _EditableNameWidgetState extends State<EditableNameWidget> {
           child: Row(
             children: [
               FilledButton(
-                onPressed: () {},
+                onPressed: () {
+                  appRouter.go('/dashboard/qrcode', extra: widget.deviceId);
+                },
                 child: Text('Show QR Code', style: TextStyle(fontSize: 10),),
               ),
               IconButton(

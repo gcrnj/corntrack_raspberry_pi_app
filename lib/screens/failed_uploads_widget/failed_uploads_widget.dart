@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:corntrack_raspberry_pi_app/api/flask_api.dart';
 import 'package:corntrack_raspberry_pi_app/app_router.dart';
 import 'package:corntrack_raspberry_pi_app/data/api_data.dart';
 import 'package:corntrack_raspberry_pi_app/data/failed_upload_data.dart';
@@ -11,7 +12,9 @@ import '../dashboard/dashboard_screen.dart';
 import '../error/error_widget.dart';
 
 class FailedUploadsWidget extends ConsumerStatefulWidget {
-  const FailedUploadsWidget({super.key});
+  final String deviceId;
+
+  const FailedUploadsWidget({super.key, required this.deviceId});
 
   @override
   ConsumerState<FailedUploadsWidget> createState() =>
@@ -20,14 +23,19 @@ class FailedUploadsWidget extends ConsumerStatefulWidget {
 
 class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
   late final FutureProvider<ApiData<List<FailedUploadData>>>
-      failedUploadsProvider;
+  failedUploadsProvider;
   final failedUploadService = FailedUploadServiceFactory.create();
+  final isLoadingButtonProvider = StateProvider<bool>((ref) => false);
 
   @override
   void initState() {
     failedUploadsProvider = FutureProvider((ref) async {
-      final failedUploadService = FailedUploadServiceFactory.create();
-      return await failedUploadService.getAllFailedUploads();
+      print("heyyy1");
+      final failedUploads = await failedUploadService.getAllFailedUploads(
+          widget.deviceId);
+      print("A${failedUploads.data?.length ?? '123'}");
+      print(failedUploads.error.toString());
+      return failedUploads;
     });
     super.initState();
   }
@@ -40,7 +48,11 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
       data: (data) {
         final failedUploads = data.data ?? List.empty();
 
-        if (failedUploads.isEmpty) {
+        if(!data.isSuccess) {
+          return Center(
+            child: Text(data.error ?? 'Something went wrong'),
+          );
+        } else if (failedUploads.isEmpty) {
           return Column(
             children: [Text("You're all set!")],
           );
@@ -51,12 +63,12 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
           print('Value - ${value.dataType}');
         }
         final failedImages = failedUploads
-            .where((element) => element.dataType == FailedUploadDataType.image)
+            .where((element) => element.dataType == FailedUploadDataType.photo)
             .sorted((a, b) => a.dateTime.compareTo(b.dateTime))
             .toList();
 
         final failedNonImages = failedUploads
-            .where((element) => element.dataType != FailedUploadDataType.image)
+            .where((element) => element.dataType != FailedUploadDataType.photo)
             .sorted((a, b) => a.dateTime.compareTo(b.dateTime))
             .toList();
 
@@ -79,6 +91,7 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _FailedUploadsList(
+                          url: failedUploadService.failedUploadApi.baseUrl,
                           isImage: true,
                           datedFailedData: groupFailedUploadsByDate(
                             failedImages,
@@ -86,6 +99,7 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
                         ),
 
                         _FailedUploadsList(
+                          url: failedUploadService.failedUploadApi.baseUrl,
                           header: 'Corn 1',
                           datedFailedData: groupFailedUploadsByDate(
                             failedNonImages,
@@ -94,6 +108,7 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
                         ),
 
                         _FailedUploadsList(
+                          url: failedUploadService.failedUploadApi.baseUrl,
                           header: 'Corn 2',
                           datedFailedData: groupFailedUploadsByDate(
                             failedNonImages,
@@ -102,6 +117,7 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
                         ),
 
                         _FailedUploadsList(
+                          url: failedUploadService.failedUploadApi.baseUrl,
                           header: 'Corn 3',
                           datedFailedData: groupFailedUploadsByDate(
                             failedNonImages,
@@ -123,7 +139,7 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
         );
       },
       error: (error, stackTrace) {
-        print('error');
+        print('error in failed uploads');
         return Center(
           child: errorWidget(
             error.toString(),
@@ -139,6 +155,7 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
   }
 
   Widget retryButtonWidget(List<FailedUploadData>? failedUploadList) {
+    final isLoading = ref.watch(isLoadingButtonProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -156,11 +173,13 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
           Expanded(
             child: Center(
               child: FilledButton(
-                onPressed: () => appRouter.go(
-                  '/dashboard/manual_upload',
-                  extra: failedUploadList,
-                ),
-                child: Text(
+                onPressed: isLoading ? null : () async {
+                  ref.read(isLoadingButtonProvider.notifier).state = true;
+                  final failedUpload = await failedUploadService.manualUpload(widget.deviceId);
+                  ref.refresh(failedUploadsProvider.future);
+                  ref.read(isLoadingButtonProvider.notifier).state = false;
+                  },
+                child: isLoading ? CircularProgressIndicator() : Text(
                   'Manual Upload',
                 ),
               ),
@@ -173,7 +192,7 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
 
   List<FailedUploadData> getFailedUploadByType(
       {required List<FailedUploadData>? data,
-      required FailedUploadDataType dataType}) {
+        required FailedUploadDataType dataType}) {
     if (data == null) return List.empty();
     return data.where((element) => element.dataType == dataType).toList();
   }
@@ -206,57 +225,63 @@ class _FailedUploadsList extends StatelessWidget {
 
   final String? header;
   final bool isImage;
+  final String url;
 
   const _FailedUploadsList(
-      {required this.datedFailedData, this.header, this.isImage = false});
+      {required this.datedFailedData, this.header, this.isImage = false, required this.url});
 
   @override
   Widget build(BuildContext context) {
     return datedFailedData.isEmpty
         ? SizedBox()
         : Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (header != null)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                header!,
+                style:
+                TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.arrow_drop_down_rounded),
+              ),
+            ],
+          ),
+        ...datedFailedData.entries.map((entry) {
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (header != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      header!,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.arrow_drop_down_rounded),
-                    ),
-                  ],
-                ),
-              ...datedFailedData.entries.map((entry) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header: Date
-                    Text(
-                      _formatDate(entry.key),
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+              // Header: Date
+              Text(
+                _formatDate(entry.key),
+                style:
+                TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
 
-                    // List of failed non-images for this date
-                    ...entry.value.map((data) => isImage
-                        ? Image.network(data.image ?? '')
-                        : ListTile(
-                            leading: Icon(Icons.arrow_forward_ios_rounded),
-                            title: Text(data.dataType
-                                .getDisplayName()), // Customize based on data properties
-                          )),
-                  ],
+              // List of failed non-images for this date
+              ...entry.value.map((data) {
+                // String imageUrl = '$url/${data.image ?? ''}';
+                String imageUrl = "$url/failed-uploads/uploads/${data.image ?? ''}";
+                print('imageUrl = $imageUrl');
+                return isImage
+                    ? Image.network(imageUrl, width: MediaQuery.of(context).size.width / 2,)
+                    : ListTile(
+                  leading: Icon(Icons.arrow_forward_ios_rounded),
+                  title: Text(data.dataType
+                      .getDisplayName()), // Customize based on data properties
                 );
               }),
-              SizedBox(height: 10), // Space between different dates
             ],
           );
+        }),
+        SizedBox(height: 10), // Space between different dates
+      ],
+    );
   }
 
   // Helper function to format DateTime
@@ -266,7 +291,8 @@ class _FailedUploadsList extends StatelessWidget {
     }
 
     String formattedTime() {
-      return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+      return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString()
+          .padLeft(2, '0')}";
     }
 
     return "${formattedDate()} @ ${formattedTime()}";

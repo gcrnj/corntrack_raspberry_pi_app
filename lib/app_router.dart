@@ -1,4 +1,5 @@
 
+import 'package:corntrack_raspberry_pi_app/api/qr_code.dart';
 import 'package:corntrack_raspberry_pi_app/data/failed_upload_data.dart';
 import 'package:corntrack_raspberry_pi_app/screens/captured_photos/captured_photos.dart';
 import 'package:corntrack_raspberry_pi_app/screens/wifi_connect/wifi_connect.dart';
@@ -99,6 +100,13 @@ final GoRouter _appRouter = GoRouter(
           path: '/connection',
           builder: (BuildContext context, GoRouterState state) {
             return WifiConnect();
+          },
+        ),
+        GoRoute(
+          path: '/qrcode',
+          builder: (BuildContext context, GoRouterState state) {
+            final deviceId = (state.extra as String?) ?? '';
+            return QRCodeScreen(deviceId: deviceId);
           },
         ),
       ]

@@ -119,9 +119,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ),
                                 ),
                                 child: deviceDetails == null
-                                    ? CircularProgressIndicator()
+                                    ? Center(child: CircularProgressIndicator())
                                     : EditableNameWidget(
                                         text: deviceDetails.deviceName,
+                                        deviceId: deviceDetails.deviceId,
                                         onSubmitted: (newValue) {
                                           deviceServices.editDeviceName(
                                               deviceDetails.deviceId, newValue);
@@ -319,7 +320,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-                        Expanded(child: FailedUploadsWidget()),
+                        deviceDetails?.deviceId != null
+                            ? Expanded(
+                                child: FailedUploadsWidget(
+                                deviceId: deviceDetails?.deviceId ?? '',
+                              ))
+                            : SizedBox(),
                       ],
                     ),
                   ),

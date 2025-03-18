@@ -81,6 +81,7 @@ class DevicesApi extends IDeviceApi {
       body: json.encode({'deviceName': newDeviceName}),
     );
 
+    try {
     if (response.statusCode == 200) {
       print('Device name updated successfully');
       return ApiData.success(data: null);
@@ -88,6 +89,11 @@ class DevicesApi extends IDeviceApi {
       final error = json.decode(response.body)['error'];
       print(error);
       return ApiData.error(error: error ?? 'Failed to update device name.');
+    }
+    } catch (e) {
+      print('editDeviceName - $e');
+
+      return ApiData.error(error: e.toString());
     }
   }
 }

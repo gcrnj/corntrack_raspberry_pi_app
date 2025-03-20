@@ -98,7 +98,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     // Start the timer to trigger at the exact time
     _timer = Timer(initialDelay, () {
       devicesServices.postMoistureData(deviceId);
-      _timer = Timer.periodic(Duration(minutes: 10), (timer) {
+      _timer = Timer.periodic(Duration(minutes: 5), (timer) {
         print("Scheduled run now");
         devicesServices.postMoistureData(deviceId);
       });

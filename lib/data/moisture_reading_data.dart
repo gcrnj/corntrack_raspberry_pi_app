@@ -18,11 +18,11 @@ class MoistureReadingData {
   // Factory constructor for creating a new MoistureReadingData instance from a map.
   factory MoistureReadingData.fromJson(Map<String, dynamic> json) {
     return MoistureReadingData(
-      moisture1: json['moisture1'] as double,
-      moisture2: json['moisture2'] as double,
-      moisture3: json['moisture3'] as double,
+      moisture1: (json['moisture1'] as num).toDouble(),
+      moisture2: (json['moisture2'] as num).toDouble(),
+      moisture3: (json['moisture3'] as num).toDouble(),
       dateTime: DateTime.parse(json['time'] as String).toLocal(), // Convert to UTC
-      temperature: json['temperature'] as double,
+      temperature: (json['temperature'] as num).toDouble(),
     );
   }
 

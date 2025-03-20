@@ -4,8 +4,12 @@ import 'package:corntrack_utils/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.clear();
+
   runApp(ProviderScope(child: const MyApp()));
 }
 

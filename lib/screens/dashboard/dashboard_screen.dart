@@ -82,17 +82,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     reloadDeviceDetails();
     super.initState();
   }
-
   void scheduleNextRun(String deviceId) async {
     DateTime now = DateTime.now();
-    int nextMinutes = ((now.minute ~/ 10) + 1) * 10; // Next 10-minute mark
+    int nextMinutes = ((now.minute ~/ 5) + 1) * 5; // Next 5-minute mark
     if (nextMinutes == 60) {
       nextMinutes = 0;
       now = now.add(Duration(hours: 1)); // Move to the next hour if needed
     }
 
     DateTime nextRun =
-        DateTime(now.year, now.month, now.day, now.hour, nextMinutes);
+    DateTime(now.year, now.month, now.day, now.hour, nextMinutes);
     Duration initialDelay = nextRun.difference(DateTime.now());
 
     // Start the timer to trigger at the exact time
@@ -105,6 +104,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     });
     print("Scheduled run at: $nextRun");
   }
+
 
   void reloadDeviceDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

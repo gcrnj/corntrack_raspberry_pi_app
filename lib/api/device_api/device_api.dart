@@ -12,6 +12,8 @@ abstract class IDeviceApi extends FlaskApi {
 
   Future<ApiData<DeviceDetails?>> editDeviceName(
       String deviceId, String newDeviceName);
+
+  Future<Object?> postMoistureData(String deviceId);
 }
 
 class DevicesApi extends IDeviceApi {
@@ -95,5 +97,17 @@ class DevicesApi extends IDeviceApi {
 
       return ApiData.error(error: e.toString());
     }
+  }
+
+  @override
+  Future<Object?> postMoistureData(String deviceId) async {
+
+    final url = '$baseUrl/devices/$deviceId/soil_moisture';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    return response.body;
   }
 }

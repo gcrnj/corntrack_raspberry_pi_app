@@ -25,4 +25,9 @@ class DummyDeviceApi extends IDeviceApi {
       String deviceId, String newDeviceName) {
     return Future.value(ApiData.success(data: null));
   }
+
+  @override
+  Future<Object?> postMoistureData(String deviceId) async {
+    return null;
+  }
 }

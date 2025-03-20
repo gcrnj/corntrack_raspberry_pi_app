@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:corntrack_raspberry_pi_app/app_router.dart';
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/editable_name_widget.dart';
 import 'package:corntrack_raspberry_pi_app/screens/failed_uploads_widget/failed_uploads_widget.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../data/api_data.dart';
 import '../../data/device_details.dart';
 import '../../utility/prefsKeys.dart';
 
@@ -71,10 +74,36 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   final deviceServices = DevicesServicesFactory.create();
 
+  Timer? _timer;
+  DevicesServices devicesServices = DevicesServicesFactory.create();
+
   @override
   void initState() {
     reloadDeviceDetails();
     super.initState();
+  }
+
+  void scheduleNextRun(String deviceId) async {
+    DateTime now = DateTime.now();
+    int nextMinutes = ((now.minute ~/ 10) + 1) * 10; // Next 10-minute mark
+    if (nextMinutes == 60) {
+      nextMinutes = 0;
+      now = now.add(Duration(hours: 1)); // Move to the next hour if needed
+    }
+
+    DateTime nextRun =
+        DateTime(now.year, now.month, now.day, now.hour, nextMinutes);
+    Duration initialDelay = nextRun.difference(DateTime.now());
+
+    // Start the timer to trigger at the exact time
+    _timer = Timer(initialDelay, () {
+      devicesServices.postMoistureData(deviceId);
+      _timer = Timer.periodic(Duration(minutes: 10), (timer) {
+        print("Scheduled run now");
+        devicesServices.postMoistureData(deviceId);
+      });
+    });
+    print("Scheduled run at: $nextRun");
   }
 
   void reloadDeviceDetails() async {
@@ -82,6 +111,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final deviceDetails = await deviceServices
         .getDeviceDetails(prefs.getString(PrefKeys.deviceId.name) ?? '');
     ref.read(deviceDetailsProvider.notifier).state = deviceDetails.data;
+    scheduleNextRun(deviceDetails.data?.deviceId ?? '');
   }
 
   @override

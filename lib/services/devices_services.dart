@@ -51,4 +51,10 @@ class DevicesServices {
   ) async {
     return await deviceApi.editDeviceName(deviceId, newDeviceName);
   }
+
+  Future<Object?> postMoistureData(
+    String deviceId,
+  ) async {
+    return await deviceApi.postMoistureData(deviceId);
+  }
 }

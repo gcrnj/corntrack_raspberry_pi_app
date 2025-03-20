@@ -32,10 +32,12 @@ class _QRCodeScreenState extends ConsumerState<QRCodeScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-                QrImageView(
-                  data: widget.deviceId,
-                  version: QrVersions.auto,
-                  size: 200.0,
+                SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: Image.network(
+                    'http://localhost:5000/qrcode/generate/${widget.deviceId}'
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text(

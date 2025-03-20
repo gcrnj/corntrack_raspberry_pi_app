@@ -14,3 +14,9 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+cd ~/Documents/gio/corntrack_raspberry_pi_app/build/linux/arm64/release/bundle
+
+chmod +x corntrack_raspberry_pi_app
+
+./corntrack_raspberry_pi_app

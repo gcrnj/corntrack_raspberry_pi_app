@@ -11,35 +11,23 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
   Future<ApiData<List<MoistureReadingData>>> getAll() async {
     return ApiData.success(data: [
       MoistureReadingData(
-          moisture: 205,
-          pot: 3,
+          moisture1: 30,
+          moisture2: 30,
+          moisture3: 30,
           dateTime: DateTime(2025, 2, 27, 11, 0, 0),
           temperature: 322),
       MoistureReadingData(
-          moisture: 405,
-          pot: 3,
+          moisture1: 30,
+          moisture2: 30,
+          moisture3: 30,
           dateTime: DateTime(2025, 2, 27, 10, 0, 0),
           temperature: 33),
       MoistureReadingData(
-          moisture: 30,
-          pot: 3,
+          moisture1: 30,
+          moisture2: 30,
+          moisture3: 30,
           dateTime: DateTime(2025, 2, 27, 9, 0, 0),
           temperature: 315),
-      MoistureReadingData(
-          moisture: 25,
-          pot: 3,
-          dateTime: DateTime(2025, 2, 27, 8, 0, 0),
-          temperature: 292),
-      MoistureReadingData(
-          moisture: 50,
-          pot: 3,
-          dateTime: DateTime(2025, 2, 27, 7, 0, 0),
-          temperature: 30),
-      MoistureReadingData(
-          moisture: 32,
-          pot: 3,
-          dateTime: DateTime(2025, 2, 27, 6, 0, 0),
-          temperature: 321),
     ]);
   }
 
@@ -75,59 +63,19 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
     return ApiData.success(
         data: [
       MoistureReadingData(
-        moisture: 25,
-        pot: 1,
+        moisture1: 25,
+        moisture2: 25,
+        moisture3: 25,
         temperature: 25,
         dateTime: DateTime(2025, 2, 27, 9, 0, 0),
       ),
       MoistureReadingData(
-        moisture: 30,
-        pot: 2,
+        moisture1: 25,
+        moisture2: 25,
+        moisture3: 25,
         temperature: 26,
         dateTime: DateTime(2025, 2, 27, 9, 0, 0),
       ),
-      MoistureReadingData(
-        moisture: 28,
-        pot: 3,
-        temperature: 27,
-        dateTime: DateTime(2025, 2, 27, 9, 0, 0),
-      ),
-      MoistureReadingData(
-        moisture: 32,
-        pot: 1,
-        temperature: 27,
-        dateTime: DateTime(2025, 2, 27, 11, 0, 0),
-      ),
-      MoistureReadingData(
-        moisture: 34,
-        pot: 2,
-        temperature: 28,
-        dateTime: DateTime(2025, 2, 27, 11, 0, 0),
-      ),
-      MoistureReadingData(
-        moisture: 33,
-        pot: 3,
-        temperature: 29,
-        dateTime: DateTime(2025, 2, 27, 11, 0, 0),
-      ),
-      MoistureReadingData(
-        moisture: 29,
-        pot: 1,
-        temperature: 25,
-        dateTime: DateTime(2025, 2, 27, 1, 0, 0),
-      ),
-      MoistureReadingData(
-        moisture: 31,
-        pot: 2,
-        temperature: 26,
-        dateTime: DateTime(2025, 2, 27, 1, 0, 0),
-      ),
-      MoistureReadingData(
-        moisture: 30,
-        pot: 3,
-        temperature: 28,
-        dateTime: DateTime(2025, 2, 27, 1, 0, 0),
-      ),
-    ].where((element) => pots.contains(element.pot)).toList());
+    ].toList());
   }
 }

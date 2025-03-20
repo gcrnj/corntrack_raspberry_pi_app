@@ -74,11 +74,12 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                             context,
                             (context, column) {
                               const headers = {
-                                0: "Pot",
-                                1: "Date",
-                                2: "Time",
-                                3: "Soil Moisture",
-                                4: "Temperature (°C)",
+                                0: "Pot 1",
+                                1: "Pot 2",
+                                2: "Pot 3",
+                                3: "Date",
+                                4: "Time",
+                                5: "Temperature (°C)",
                               };
 
                               return Align(
@@ -116,14 +117,16 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                                 String text = '';
                                 switch (column) {
                                   case 0:
-                                    text = item.pot.toString();
+                                    text = item.moisture1.toString();
                                   case 1:
-                                    text = item.formattedDate();
+                                    text = item.moisture2.toString();
                                   case 2:
-                                    text = item.formattedTime();
+                                    text = item.moisture3.toString();
                                   case 3:
-                                    text = item.moisture.toString();
+                                    text = item.formattedDate();
                                   case 4:
+                                    text = item.formattedTime();
+                                  case 5:
                                     text = item.temperature.toString();
                                 }
                                 return Align(

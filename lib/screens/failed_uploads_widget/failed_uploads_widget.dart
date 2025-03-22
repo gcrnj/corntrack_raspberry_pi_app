@@ -103,7 +103,6 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
                           header: 'Corn 1',
                           datedFailedData: groupFailedUploadsByDate(
                             failedNonImages,
-                            filterPot: Pots.pot1,
                           ),
                         ),
 
@@ -112,7 +111,6 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
                           header: 'Corn 2',
                           datedFailedData: groupFailedUploadsByDate(
                             failedNonImages,
-                            filterPot: Pots.pot2,
                           ),
                         ),
 
@@ -121,7 +119,6 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
                           header: 'Corn 3',
                           datedFailedData: groupFailedUploadsByDate(
                             failedNonImages,
-                            filterPot: Pots.pot3,
                           ),
                         ),
 
@@ -139,7 +136,7 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
         );
       },
       error: (error, stackTrace) {
-        print('error in failed uploads');
+        print('error in failed uploads $error');
         return Center(
           child: errorWidget(
             error.toString(),
@@ -198,23 +195,13 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
   }
 
   Map<DateTime, List<FailedUploadData>> groupFailedUploadsByDate(
-      List<FailedUploadData> failedUploads,
-      {Pots? filterPot}) {
-    var filteredFailedData = filterPot == null
-        ? failedUploads
-        : failedUploads.where((element) => element.pot == filterPot).toList();
+      List<FailedUploadData> failedUploads) {
+    var filteredFailedData = failedUploads;
     var groupedByDate = groupBy(filteredFailedData, (FailedUploadData data) {
       return DateTime(data.dateTime.year, data.dateTime.month,
           data.dateTime.day, data.dateTime.hour, data.dateTime.minute);
     });
 
-    // Print the grouped map
-    groupedByDate.forEach((key, value) {
-      print("Date: $key");
-      for (var item in value) {
-        print("  - ${item.image}, Type: ${item.dataType}, Pot: ${item.pot}");
-      }
-    });
 
     return groupedByDate;
   }

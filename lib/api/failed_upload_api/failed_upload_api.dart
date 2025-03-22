@@ -62,6 +62,8 @@ class FailedUploadApi extends IFailedUploadApi {
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
     );
+    print('manualUpload statusCode = ${response.statusCode}');
+    print('manualUpload message = \n${response.body}');
 
     if (response.statusCode == 200) {
       return ApiData.success(data: 'Upload successful');

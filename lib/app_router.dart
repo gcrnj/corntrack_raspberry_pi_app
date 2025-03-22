@@ -2,6 +2,7 @@
 import 'package:corntrack_raspberry_pi_app/api/qr_code.dart';
 import 'package:corntrack_raspberry_pi_app/data/failed_upload_data.dart';
 import 'package:corntrack_raspberry_pi_app/screens/captured_photos/captured_photos.dart';
+import 'package:corntrack_raspberry_pi_app/screens/graph_screen.dart';
 import 'package:corntrack_raspberry_pi_app/screens/wifi_connect/wifi_connect.dart';
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/dashboard_screen.dart';
 import 'package:corntrack_raspberry_pi_app/screens/health_status/health_status.dart';
@@ -107,6 +108,13 @@ final GoRouter _appRouter = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             final deviceId = (state.extra as String?) ?? '';
             return QRCodeScreen(deviceId: deviceId);
+          },
+        ),
+        GoRoute(
+          path: '/smart-farming',
+          builder: (BuildContext context, GoRouterState state) {
+            final selectedCornPots = (state.extra as List<Pots>?) ?? List.empty(); // Adjust type accordingly
+            return GraphScreen(selectedPots: selectedCornPots);
           },
         ),
       ]

@@ -4,7 +4,6 @@ class FailedUploadData {
   final DateTime dateTime;
   final String? image;
   final FailedUploadDataType dataType;
-  final Pots? pot;
   final double? moisture;
   final double? temperature;
   final double? humidity;
@@ -14,7 +13,6 @@ class FailedUploadData {
     required this.dateTime,
     required this.dataType,
     this.image,
-    this.pot,
     this.moisture,
     this.temperature,
     this.humidity,
@@ -25,7 +23,6 @@ class FailedUploadData {
     'time': dateTime.toIso8601String(),
     'type': dataType.toString().split('.').last, // Ensure string format
     'file': image, // Only for photos
-    'pot': pot?.getNumber().toString(),
     'moisture': moisture,
     'temperature': temperature,
     'humidity': humidity,
@@ -44,15 +41,14 @@ class FailedUploadData {
     return FailedUploadData(
       dateTime: DateTime.parse(json['time']),
       dataType: FailedUploadDataType.moisture,
-      pot: Pots.values.firstWhere(
-            (p) => p.getNumber().toString() == json['pot'].toString(),
-      ),
-      moisture: json['moisture']?.toDouble(),
+      moisture: (json['moisture1'] ?? 0).toDouble(), // Adjusted to use moisture1
       temperature: json['temperature']?.toDouble(),
-      humidity: json['humidity']?.toDouble(),
-      waterDistributed: json['water_distributed'],
+      humidity: json['humidiity']?.toDouble(), // Fixed typo: 'humidiity' → 'humidity'
+      waterDistributed: json['water_distributed'] ?? false,
     );
   }
+
+
 }
 
 

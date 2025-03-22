@@ -82,36 +82,61 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     reloadDeviceDetails();
     super.initState();
   }
+
   void scheduleNextRun(String deviceId) async {
+
     DateTime now = DateTime.now();
-    int nextMinutes = ((now.minute ~/ 5) + 1) * 5; // Next 5-minute mark
+    int nextMinutes = ((now.minute ~/ 5) + 1) * 5;
+
     if (nextMinutes == 60) {
       nextMinutes = 0;
-      now = now.add(Duration(hours: 1)); // Move to the next hour if needed
+      now = now.add(Duration(hours: 1));
     }
 
-    DateTime nextRun =
-    DateTime(now.year, now.month, now.day, now.hour, nextMinutes);
+    DateTime nextRun = DateTime(now.year, now.month, now.day, now.hour, nextMinutes);
     Duration initialDelay = nextRun.difference(DateTime.now());
 
-    // Start the timer to trigger at the exact time
-    _timer = Timer(initialDelay, () {
+    print("Next scheduled run at: $nextRun");
+
+    // Wait until the next 5-minute mark, then start periodic execution
+    print('initialDelay $initialDelay');
+    Timer(initialDelay, () {
+      print('=======  Schedule Run  ===========');
+      print("1st! ${DateTime.now()}");
+      print('=======  Schedule Run  ===========');
       devicesServices.postMoistureData(deviceId);
+
+      // Schedule periodic runs exactly at every 5-minute mark
       _timer = Timer.periodic(Duration(minutes: 5), (timer) {
-        print("Scheduled run now");
-        devicesServices.postMoistureData(deviceId);
+        DateTime now = DateTime.now();
+        int minutes = now.minute;
+
+        print(minutes);
+        // Ensure it runs only at 5-minute marks
+        if (minutes % 5 == 0) {
+          print('=======  Schedule Run  ===========');
+          print("${DateTime.now()}");
+          print('=======  Schedule Run  ===========');
+          devicesServices.postMoistureData(deviceId);
+        }
       });
     });
-    print("Scheduled run at: $nextRun");
   }
 
 
   void reloadDeviceDetails() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final deviceDetails = await deviceServices
-        .getDeviceDetails(prefs.getString(PrefKeys.deviceId.name) ?? '');
-    ref.read(deviceDetailsProvider.notifier).state = deviceDetails.data;
-    scheduleNextRun(deviceDetails.data?.deviceId ?? '');
+    var preDeviceId = ref.read(deviceDetailsProvider)?.deviceId ?? '';
+    if(preDeviceId == '') { // No deviceId
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final deviceId = prefs.getString(PrefKeys.deviceId.name) ?? '';
+      final deviceDetails = await deviceServices
+          .getDeviceDetails(deviceId);
+      ref.read(deviceDetailsProvider.notifier).state = deviceDetails.data;
+      preDeviceId = deviceDetails.data?.deviceId ?? '';
+    }
+    print('preDeviceId = ${preDeviceId}');
+    print('Got deviceId = ${ref.read(deviceDetailsProvider)?.deviceId}');
+    scheduleNextRun(preDeviceId );
   }
 
   @override
@@ -266,9 +291,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ),
                             Expanded(
                               child: _buildClickableContainer(
-                                'Corn Health Status',
+                                'Smart Farming Dashboard',
                                 onTap: () {
-                                  appRouter.go('/dashboard/health_status');
+                                  appRouter.go('/dashboard/smart-farming', extra: selectedCornPots);
                                 },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,

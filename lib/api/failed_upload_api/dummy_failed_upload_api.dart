@@ -12,22 +12,18 @@ class DummyFailedUploadApi extends IFailedUploadApi {
     ),
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 1)),
-      pot: Pots.pot1,
       dataType: FailedUploadDataType.moisture,
     ),
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 1)),
-      pot: Pots.pot2,
       dataType: FailedUploadDataType.moisture,
     ),
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 2)),
-      pot: Pots.pot1,
       dataType: FailedUploadDataType.temperature,
     ),
     FailedUploadData(
       dateTime: DateTime.now().subtract(Duration(days: 2)),
-      pot: Pots.pot1,
       dataType: FailedUploadDataType.moisture,
     ),
   ];

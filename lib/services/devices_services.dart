@@ -55,6 +55,9 @@ class DevicesServices {
   Future<Object?> postMoistureData(
     String deviceId,
   ) async {
-    return await deviceApi.postMoistureData(deviceId);
+    print('postMoistureData');
+    final data = await deviceApi.postMoistureData(deviceId);
+    print(data.toString());
+    return data;
   }
 }

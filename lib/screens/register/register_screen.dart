@@ -67,7 +67,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     if(deviceId != null) {
       print('Saving Device Key - $deviceId');
-      prefs.setString(PrefKeys.deviceId.name, deviceId);
+      await prefs.setString(PrefKeys.deviceId.name, deviceId);
       appRouter.go('/dashboard');
     }
     ref.read(isLoadingProvider.notifier).state = false;

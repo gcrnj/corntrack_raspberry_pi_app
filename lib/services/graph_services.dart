@@ -7,25 +7,15 @@ import '../data/api_data.dart';
 class GraphServiceFactory {
   static GraphService create() {
     return GraphService(GraphApi());
-    // if (kIsWeb) {
-    //   return PhotosServices(DummyPhotosApi());
-    // } else if (Platform.isLinux) {
-    //   return PhotosServices(PhotosApi());
-    // } else {
-    //   return PhotosServices(DummyPhotosApi());
-    // }
   }
 }
-
 
 class GraphService {
   final IGraphApi graphApi;
 
   GraphService(this.graphApi);
 
-  late final graphUrl = '${graphApi.baseUrl}/photos';
-
-  Future<ApiData<GraphData>> getGraphData(String deviceId) async {
-    return await graphApi.getGraphData(deviceId);
+  Future<ApiData<List<GraphData>>> getGraphData(String deviceId, List<String> moistureId) async {
+    return await graphApi.getGraphData(deviceId, moistureId);
   }
 }

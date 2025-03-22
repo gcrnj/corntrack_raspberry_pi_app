@@ -7,24 +7,27 @@ import '../../data/api_data.dart';
 import '../flask_api.dart';
 
 abstract class IGraphApi extends FlaskApi {
-  Future<ApiData<GraphData>> getGraphData(String deviceId);
+  Future<ApiData<List<GraphData>>> getGraphData(
+      String deviceId, List<String> moistureId);
 }
 
 class GraphApi extends IGraphApi {
   @override
-  Future<ApiData<GraphData>> getGraphData(String deviceId) async {
+  Future<ApiData<List<GraphData>>> getGraphData(
+      String deviceId, List<String> moistureId) async {
     try {
-      final url = '$baseUrl/graphs/get-graph/$deviceId';
-      print('Fetching soil data from getGraphData - $url');
+      final url = '$baseUrl/graphs/get-graph/$deviceId?moistureId=${moistureId.join(',')}';
+      print('Fetching soil data: $url');
       final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body)['data'];
-        return ApiData.success(data: GraphData.fromJson(data));
-      } else {
-        print('Failed to load soil data');
 
-        return ApiData.error(error: "Failed to load soil data");
-      }
+      final jsonData = json.decode(response.body);
+      final data = jsonData['data'];
+      print('getGraphData - \n$data');
+      return ApiData.success(
+        data: data
+            .map<GraphData>((json) => GraphData.fromJson(json))
+            .toList(),
+      );
     } catch (e) {
       return ApiData.error(error: e.toString());
     }

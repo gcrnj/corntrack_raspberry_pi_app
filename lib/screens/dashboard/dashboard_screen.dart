@@ -47,6 +47,17 @@ enum Pots {
         return 3;
     }
   }
+
+  String getMoistureId() {
+    switch (this) {
+      case Pots.pot1:
+        return 'moisture1';
+      case Pots.pot2:
+        return 'moisture2';
+        case Pots.pot3:
+        return 'moisture3';
+    }
+  }
 }
 
 final deviceDetailsProvider = StateProvider<DeviceDetails?>(

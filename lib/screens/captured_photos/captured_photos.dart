@@ -26,6 +26,8 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
   final PhotosServices photoService = PhotosServiceFactory.create();
   late final FutureProvider<ApiData<List<PhotosData>>> photosProvider;
   final deviceIdProvider = StateProvider<String>((ref) => '');
+  final selectedHealthProvider = StateProvider<String?>((ref) => 'Healthy');
+  final selectedStageProvider = StateProvider<String?>((ref) => null);
 
   @override
   void initState() {
@@ -33,11 +35,13 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
       String deviceId = ref.watch(deviceIdProvider);
       if (deviceId.isEmpty) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        ref.read(deviceIdProvider.notifier).state = prefs.getString(PrefKeys.deviceId.name) ?? '';
+        ref.read(deviceIdProvider.notifier).state =
+            prefs.getString(PrefKeys.deviceId.name) ?? '';
       }
       print("Getting captured photos with deviceId=$deviceId");
       final apiData = await photoService.getAll(deviceId ?? '');
-      print("Result of captured photos = ${apiData.isSuccess} - ${apiData.error} - ${apiData.data?.length}");
+      print(
+          "Result of captured photos = ${apiData.isSuccess} - ${apiData.error} - ${apiData.data?.length}");
       return apiData;
     });
     super.initState();
@@ -46,13 +50,68 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
   @override
   Widget build(BuildContext context) {
     final photoUrls = ref.watch(photosProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.hasUrl ? 'Photo Details' : 'Captured Photos'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: widget.hasUrl ? photoDetailsView() : photosView(photoUrls),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Health Classification
+                DropdownButton<String>(
+                  value: ref.watch(selectedHealthProvider),
+                  onChanged: (String? newValue) {
+                    print('Newww');
+                  },
+                  items: [
+                    'Healthy',
+                    'Unhealthy',
+                    'All',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                      onTap: () {
+                        ref.read(selectedHealthProvider.notifier).state = value;
+                      },
+                    );
+                  }).toList(),
+                ),
+
+                // Stages
+                DropdownButton<String>(
+                  value:  ref.watch(selectedStageProvider),
+                  onChanged: (String? newValue) {
+                    ref.read(selectedStageProvider.notifier).state = newValue;
+                  },
+                  items: [
+                    'V6',
+                    'V7',
+                    'V8',
+                    'V9',
+                    'R1',
+                    'R2',
+                    'R3',
+                    'R4',
+                    'R5',
+                    'R6',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+            widget.hasUrl ? photoDetailsView() : photosView(photoUrls)
+          ],
+        ),
       ),
     );
   }
@@ -71,7 +130,8 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
         itemBuilder: (context, index) {
           String currentPath = urls.elementAt(index).path ?? '';
           // final imageUrl = baseFirebaseStorageUrl + currentPath;
-          final imageUrl = 'https://storage.googleapis.com/project-corntrack.firebasestorage.app/gallery.png?Expires=1741585390&GoogleAccessId=firebase-adminsdk-fbsvc%40project-corntrack.iam.gserviceaccount.com&Signature=YXXfzgxIL6R0BSq5F0c4CDj42GZbqlXE1ISoLzSYf%2B2r0tKUCzaQgAqglrpSd%2FVTe39mIT6nDtwx8cUyt2puD0WWB3gnJkuOqdF4yESHMia3gQeKhtGmjtfV8F546y6%2BNxZoAk8N1cbZWAgybSLC2ljy8nRCyMrnFFSXC4%2Faa4x7hKCLDjIkqxzOt9hRLl4YweVx57af4TUdVSVznVV%2FwTzXNTuILgm644rTbfUG0zJr5w0ujFpCXW7Wuhku%2BvOq%2Fwnlbm%2FBCpSwG%2FR8IeDsVgMHD8EOQiriTrBZeT7c3mEcTo%2BeN4USlQAGLbKvQzfBz6l8lBDmWAN1Q8c80WxmnQ%3D%3D';
+          final imageUrl =
+              'https://storage.googleapis.com/project-corntrack.firebasestorage.app/gallery.png?Expires=1741585390&GoogleAccessId=firebase-adminsdk-fbsvc%40project-corntrack.iam.gserviceaccount.com&Signature=YXXfzgxIL6R0BSq5F0c4CDj42GZbqlXE1ISoLzSYf%2B2r0tKUCzaQgAqglrpSd%2FVTe39mIT6nDtwx8cUyt2puD0WWB3gnJkuOqdF4yESHMia3gQeKhtGmjtfV8F546y6%2BNxZoAk8N1cbZWAgybSLC2ljy8nRCyMrnFFSXC4%2Faa4x7hKCLDjIkqxzOt9hRLl4YweVx57af4TUdVSVznVV%2FwTzXNTuILgm644rTbfUG0zJr5w0ujFpCXW7Wuhku%2BvOq%2Fwnlbm%2FBCpSwG%2FR8IeDsVgMHD8EOQiriTrBZeT7c3mEcTo%2BeN4USlQAGLbKvQzfBz6l8lBDmWAN1Q8c80WxmnQ%3D%3D';
           print(imageUrl);
           return InkWell(
             onTap: () {
@@ -98,22 +158,24 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
       );
     });
   }
+
   Widget photoDetailsView() {
-    String path = widget.url!;  // Use the original URL
+    String path = widget.url!; // Use the original URL
     print('Path: $path');
 
     return Column(
       children: [
         Text('Url: \t\t$path'),
         Image.network(
-          path,  // DO NOT encode again!
+          path, // DO NOT encode again!
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
             return Center(
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        (loadingProgress.expectedTotalBytes ?? 1)
                     : null,
               ),
             );
@@ -127,13 +189,13 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
     );
   }
 
-
   String imageUrl(String path) {
     String codedPath = path.replaceAll('/', '%2F'); // Ensures proper encoding
     String deviceId = ref.watch(deviceIdProvider);
     print(baseFirebaseStorageUrl);
     print('captured_photos%2F');
     print(deviceId);
-    return baseFirebaseStorageUrl + 'captured_photos%2F$deviceId%2F$codedPath?alt=media';
+    return baseFirebaseStorageUrl +
+        'captured_photos%2F$deviceId%2F$codedPath?alt=media';
   }
 }

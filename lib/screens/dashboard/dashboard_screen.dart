@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/api_data.dart';
 import '../../data/device_details.dart';
 import '../../utility/prefsKeys.dart';
+import 'package:intl/intl.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -86,11 +87,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   final deviceServices = DevicesServicesFactory.create();
 
   Timer? _timer;
+  late Timer _dateTimeTimer;
+
+  String formattedDate = "";
+  String formattedTime = "";
+
   DevicesServices devicesServices = DevicesServicesFactory.create();
 
   @override
   void initState() {
     reloadDeviceDetails();
+    _updateDateTime(); // Update immediately
+    _dateTimeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _updateDateTime(); // Update every second
+    });
     super.initState();
   }
 
@@ -150,6 +160,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     scheduleNextRun(preDeviceId );
   }
 
+
+  void _updateDateTime() {
+    DateTime now = DateTime.now();
+    setState(() {
+      formattedDate = DateFormat("MMM. dd, yyyy").format(now); // Jan. 20, 2021
+      formattedTime = DateFormat("hh:mma").format(now).toLowerCase(); // 08:02am
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final selectedCornPots = ref.watch(selectedCornPotProvider);
@@ -213,36 +231,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   children: [
                                     Text('Today'),
                                     Text(
-                                      'Aug. 25, 2025',
+                                      formattedDate,
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     Text(
-                                      '08:00am',
+                                      formattedTime,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: OutlinedButton(
-                                        style: OutlinedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          side: BorderSide(
-                                              color: semiBlackColor, width: 1),
-                                        ),
-                                        onPressed: () {
-                                          appRouter.go('/dashboard/connection');
-                                        },
-                                        child: Icon(Icons.settings,
-                                            size: 24,
-                                            color:
-                                                semiBlackColor), // Customize icon
                                       ),
                                     ),
                                   ],

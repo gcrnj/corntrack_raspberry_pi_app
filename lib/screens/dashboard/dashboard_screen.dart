@@ -4,6 +4,7 @@ import 'package:corntrack_raspberry_pi_app/app_router.dart';
 import 'package:corntrack_raspberry_pi_app/screens/dashboard/editable_name_widget.dart';
 import 'package:corntrack_raspberry_pi_app/screens/failed_uploads_widget/failed_uploads_widget.dart';
 import 'package:corntrack_raspberry_pi_app/services/devices_services.dart';
+import 'package:corntrack_raspberry_pi_app/services/photos_services.dart';
 import 'package:corntrack_raspberry_pi_app/utility/icons_paths.dart';
 import 'package:corntrack_utils/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   String formattedTime = "";
 
   DevicesServices devicesServices = DevicesServicesFactory.create();
+  PhotosServices photosServices = PhotosServiceFactory.create();
 
   @override
   void initState() {
@@ -126,11 +128,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       print("1st! ${DateTime.now()}");
       print('=======  Schedule Run  ===========');
       devicesServices.postMoistureData(deviceId);
+      photosServices.postNewPhoto(deviceId);
 
       // Schedule periodic runs exactly at every 5-minute mark
       _timer = Timer.periodic(Duration(minutes: 5), (timer) {
         DateTime now = DateTime.now();
         int minutes = now.minute;
+
 
         print(minutes);
         // Ensure it runs only at 5-minute marks
@@ -139,6 +143,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           print("${DateTime.now()}");
           print('=======  Schedule Run  ===========');
           devicesServices.postMoistureData(deviceId);
+          photosServices.postNewPhoto(deviceId);
         }
       });
     });

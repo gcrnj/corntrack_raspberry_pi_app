@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 
 abstract class IPhotosApi extends FlaskApi {
   Future<ApiData<List<PhotosData>>> getAll(String deviceId);
+  Future<void> postNewPhoto(String deviceId);
 }
 
 class PhotosApi extends IPhotosApi {
@@ -47,6 +48,21 @@ class PhotosApi extends IPhotosApi {
     } catch (e) {
       // Handle any exceptions that occur during the request.
       return ApiData.error(error: 'An error occurred: $e');
+    }
+  }
+
+  @override
+  Future<void> postNewPhoto(String deviceId) async {
+    try {
+      // Construct the URL for the GET request.
+      final url = Uri.parse('$baseUrl/photos/$deviceId/capture');
+      print("Getting $url");
+      // Make the GET request.
+      final response = await http.get(url);
+      print('postNewPhoto - ${response.statusCode} - ${response.body} - ${response.reasonPhrase}');
+    } catch (e) {
+      // Handle any exceptions that occur during the request.
+      print('postNewPhoto Error - $e');
     }
   }
 

@@ -1,9 +1,4 @@
-import 'dart:io';
-
 import 'package:corntrack_raspberry_pi_app/data/api_data.dart';
-import 'package:flutter/foundation.dart';
-
-import '../api/photos_api/dummy_photos_api.dart';
 import '../api/photos_api/photos_api.dart';
 import '../data/photos_data.dart';
 
@@ -29,5 +24,9 @@ class PhotosServices {
 
   Future<ApiData<List<PhotosData>>> getAll(String deviceId) async {
     return await photosApi.getAll(deviceId);
+  }
+
+  Future<void> postNewPhoto(String deviceId) async {
+    return await photosApi.postNewPhoto(deviceId);
   }
 }

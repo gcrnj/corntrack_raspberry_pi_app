@@ -73,14 +73,29 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                           child: contentBuilder(
                             context,
                             (context, column) {
-                              const headers = {
-                                0: "Pot 1",
-                                1: "Pot 2",
-                                2: "Pot 3",
-                                3: "Date",
-                                4: "Time",
-                                5: "Temperature (°C)",
-                              };
+                              final headers =
+                                  List<String>.empty(growable: true);
+                              headers.add(
+                                "Date",
+                              );
+                              headers.add(
+                                "Time",
+                              );
+                              headers.add(
+                                "Temperature (°C)",
+                              );
+
+                              if (widget.selectedCornPots.contains(Pots.pot1)) {
+                                headers.add("Pot 1");
+                              }
+
+                              if (widget.selectedCornPots.contains(Pots.pot2)) {
+                                headers.add("Pot 2");
+                              }
+
+                              if (widget.selectedCornPots.contains(Pots.pot3)) {
+                                headers.add("Pot 3");
+                              }
 
                               return Align(
                                 alignment: Alignment.center,
@@ -94,14 +109,21 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                         );
                       },
                       columns: [
-                        TableColumn(width: 50, freezePriority: 1),
+                        // Date Column
                         TableColumn(width: 200),
                         // Time Column
                         TableColumn(width: 200),
                         // Temperature Column
-                        TableColumn(width: 100),
                         TableColumn(width: 200),
-                        // Temperature Column
+
+                        if (widget.selectedCornPots.contains(Pots.pot1))
+                          TableColumn(width: 50, freezePriority: 1),
+
+                        if (widget.selectedCornPots.contains(Pots.pot2))
+                          TableColumn(width: 50, freezePriority: 1),
+
+                        if (widget.selectedCornPots.contains(Pots.pot3))
+                          TableColumn(width: 50, freezePriority: 1),
                       ],
                       rowCount: data.data!.length,
                       rowHeight: 56.0,
@@ -117,17 +139,17 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                                 String text = '';
                                 switch (column) {
                                   case 0:
-                                    text = item.moisture1.toString();
-                                  case 1:
-                                    text = item.moisture2.toString();
-                                  case 2:
-                                    text = item.moisture3.toString();
-                                  case 3:
                                     text = item.formattedDate();
-                                  case 4:
+                                  case 1:
                                     text = item.formattedTime();
-                                  case 5:
+                                  case 2:
                                     text = item.temperature.toString();
+                                  case 3:
+                                    text = item.moisture1.toString();
+                                  case 4:
+                                    text = item.moisture2.toString();
+                                  case 5:
+                                    text = item.moisture3.toString();
                                 }
                                 return Align(
                                   alignment: Alignment.center,

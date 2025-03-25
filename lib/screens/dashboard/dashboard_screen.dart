@@ -405,7 +405,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget _cornsColumn(
     List<Pots> selectedCornPots,
   ) {
-    print(selectedCornPots);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

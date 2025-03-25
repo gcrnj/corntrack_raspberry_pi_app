@@ -103,10 +103,12 @@ class DevicesApi extends IDeviceApi {
   Future<Object?> postMoistureData(String deviceId) async {
 
     final url = '$baseUrl/devices/$deviceId/soil_moisture';
+    print('Posting $url');
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
     );
+    print('Response is ${response.body}');
 
     return response.body;
   }

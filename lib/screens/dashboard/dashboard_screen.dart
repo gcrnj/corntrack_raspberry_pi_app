@@ -108,8 +108,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   void scheduleNextRun(String deviceId) async {
 
+    final intervalMinutes = 30;
+
     DateTime now = DateTime.now();
-    int nextMinutes = ((now.minute ~/ 5) + 1) * 5;
+    int nextMinutes = ((now.minute ~/ intervalMinutes) + 1) * intervalMinutes;
 
     if (nextMinutes == 60) {
       nextMinutes = 0;
@@ -131,14 +133,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       photosServices.postNewPhoto(deviceId);
 
       // Schedule periodic runs exactly at every 5-minute mark
-      _timer = Timer.periodic(Duration(minutes: 5), (timer) {
+      _timer = Timer.periodic(Duration(minutes: intervalMinutes), (timer) {
         DateTime now = DateTime.now();
         int minutes = now.minute;
 
 
         print(minutes);
         // Ensure it runs only at 5-minute marks
-        if (minutes % 5 == 0) {
+        if (minutes % intervalMinutes == 0) {
           print('=======  Schedule Run  ===========');
           print("${DateTime.now()}");
           print('=======  Schedule Run  ===========');

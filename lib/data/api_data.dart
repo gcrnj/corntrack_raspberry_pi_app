@@ -10,4 +10,15 @@ class ApiData<T> {
   ApiData.error({required this.error})
       : isSuccess = false,
         data = null;
+
+  ApiData<T> copyWithSuccess({required T data}) {
+    return ApiData.success(
+      data: data,
+    );
+  }
+  ApiData copyWithError({required String error}) {
+    return ApiData.error(
+      error: error,
+    );
+  }
 }

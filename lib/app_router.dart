@@ -1,5 +1,6 @@
 import 'package:corntrack_raspberry_pi_app/api/qr_code.dart';
 import 'package:corntrack_raspberry_pi_app/data/failed_upload_data.dart';
+import 'package:corntrack_raspberry_pi_app/data/photos_data.dart';
 import 'package:corntrack_raspberry_pi_app/screens/captured_photos/captured_photos.dart';
 import 'package:corntrack_raspberry_pi_app/screens/graph_screen.dart';
 import 'package:corntrack_raspberry_pi_app/screens/wifi_connect/wifi_connect.dart';
@@ -88,15 +89,14 @@ final GoRouter _appRouter = GoRouter(
               path: '/captured_photos',
               builder: (BuildContext context, GoRouterState state) {
                 // return CapturedPhotos(url: "https://storage.googleapis.com/project-corntrack.firebasestorage.app/gallery.png?Expires=1741585390&GoogleAccessId=firebase-adminsdk-fbsvc%40project-corntrack.iam.gserviceaccount.com&Signature=YXXfzgxIL6R0BSq5F0c4CDj42GZbqlXE1ISoLzSYf%2B2r0tKUCzaQgAqglrpSd%2FVTe39mIT6nDtwx8cUyt2puD0WWB3gnJkuOqdF4yESHMia3gQeKhtGmjtfV8F546y6%2BNxZoAk8N1cbZWAgybSLC2ljy8nRCyMrnFFSXC4%2Faa4x7hKCLDjIkqxzOt9hRLl4YweVx57af4TUdVSVznVV%2FwTzXNTuILgm644rTbfUG0zJr5w0ujFpCXW7Wuhku%2BvOq%2Fwnlbm%2FBCpSwG%2FR8IeDsVgMHD8EOQiriTrBZeT7c3mEcTo%2BeN4USlQAGLbKvQzfBz6l8lBDmWAN1Q8c80WxmnQ%3D%3D");
-                return CapturedPhotos(url: state.extra as String?);
+                return CapturedPhotos();
               },
               routes: [
                 GoRoute(
                   path: '/photo_details',
                   builder: (BuildContext context, GoRouterState state) {
-                    final url = (state.extra as String?) ??
-                        ''; // Adjust type accordingly
-                    return CapturedPhotos(url: url);
+                    final photoData = (state.extra as PhotosData?); // Adjust type accordingly
+                    return CapturedPhotos(photoData: photoData);
                   },
                 ),
               ]),

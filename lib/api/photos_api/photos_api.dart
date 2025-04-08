@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 
 import 'package:corntrack_raspberry_pi_app/data/photos_data.dart';
@@ -10,15 +8,16 @@ import 'package:http/http.dart' as http;
 
 abstract class IPhotosApi extends FlaskApi {
   Future<ApiData<List<PhotosData>>> getAll(String deviceId);
+
   Future<void> postNewPhoto(String deviceId);
 }
 
 class PhotosApi extends IPhotosApi {
   @override
-  Future<ApiData<List<PhotosData>>> getAll(String deviceId)  async {
+  Future<ApiData<List<PhotosData>>> getAll(String deviceId) async {
     try {
       // Construct the URL for the GET request.
-      final url = Uri.parse('$baseUrl/photos/$deviceId');
+      final url = Uri.parse('$baseUrl/photos/$deviceId/list-files');
       print("Getting $url");
       // Make the GET request.
       final response = await http.get(url);
@@ -27,17 +26,19 @@ class PhotosApi extends IPhotosApi {
       // Check if the request was successful.
       if (response.statusCode == 200) {
         print("statusCode = ${response.statusCode}");
-        // Decode the JSON response.
+
         final Map<String, dynamic> responseData = json.decode(response.body);
 
-        // Extract the list of photos from the response data.
-        final List<dynamic> photosJson = responseData['photos'];
+        final Map<String, dynamic> photosByDate = responseData['photos'];
 
-        // Map the JSON data to a list of PhotosData objects.
-        final List<PhotosData> photos = photosJson
-            .map((json) => PhotosData.fromJson(json))
-            .toList();
 
+        final List<PhotosData> photos = [];
+
+        photosByDate.forEach((date, photosList) {
+          for (var photoJson in photosList) {
+            photos.add(PhotosData.fromJson(photoJson, date));
+          }
+        });
         // Return the list wrapped in ApiData.
         return ApiData.success(data: photos);
       } else {
@@ -59,11 +60,11 @@ class PhotosApi extends IPhotosApi {
       print("Getting $url");
       // Make the GET request.
       final response = await http.get(url);
-      print('postNewPhoto - ${response.statusCode} - ${response.body} - ${response.reasonPhrase}');
+      print(
+          'postNewPhoto - ${response.statusCode} - ${response.body} - ${response.reasonPhrase}');
     } catch (e) {
       // Handle any exceptions that occur during the request.
       print('postNewPhoto Error - $e');
     }
   }
-
 }

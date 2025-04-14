@@ -20,14 +20,14 @@ class FailedUploadData {
   });
 
   Map<String, dynamic> toJson() => {
-    'time': dateTime.toIso8601String(),
-    'type': dataType.toString().split('.').last, // Ensure string format
-    'file': image, // Only for photos
-    'moisture': moisture,
-    'temperature': temperature,
-    'humidity': humidity,
-    'water_distributed': waterDistributed,
-  };
+        'time': dateTime.toIso8601String(),
+        'type': dataType.toString().split('.').last, // Ensure string format
+        'file': image, // Only for photos
+        'moisture': moisture,
+        'temperature': temperature,
+        'humidity': humidity,
+        'water_distributed': waterDistributed,
+      };
 
   factory FailedUploadData.photoFromJson(Map<String, dynamic> json) {
     return FailedUploadData(
@@ -43,14 +43,15 @@ class FailedUploadData {
       dataType: FailedUploadDataType.moisture,
       moisture: (json['moisture1'] ?? 0).toDouble(), // Adjusted to use moisture1
       temperature: json['temperature']?.toDouble(),
-      humidity: json['humidiity']?.toDouble(), // Fixed typo: 'humidiity' → 'humidity'
+      humidity: ((json['humidity'] ?? json['humiidity'] ?? json['humidiity'])
+                  as num?) // nullable cast
+              ?.toDouble() ??
+          0.0,
+      // default value if still null
       waterDistributed: json['water_distributed'] ?? false,
     );
   }
-
-
 }
-
 
 enum FailedUploadDataType {
   photo,
@@ -59,7 +60,7 @@ enum FailedUploadDataType {
   waterDistribution;
 
   String getDisplayName() {
-    switch(this) {
+    switch (this) {
       case FailedUploadDataType.photo:
         return 'Image';
       case FailedUploadDataType.moisture:

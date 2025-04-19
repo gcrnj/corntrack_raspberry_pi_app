@@ -43,21 +43,22 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
             prefs.getString(PrefKeys.deviceId.name) ?? '';
       }
       print("Getting captured photos with deviceId=$deviceId");
-      ApiData<List<PhotosData>> apiData = await photoService.getAll(deviceId ?? '');
-      final filteredData = apiData.data?.where(
-              (element) {
+      ApiData<List<PhotosData>> apiData =
+          await photoService.getAll(deviceId ?? '');
+      final filteredData = apiData.data?.where((element) {
             final status = element.metaData.healthStatus;
-            final isSelectedStatus = (selectedHealth == 'All' || status == selectedHealth);
+            final isSelectedStatus =
+                (selectedHealth == 'All' || status == selectedHealth);
 
             final stage = element.metaData.growthStage;
-            final isSelectedStage = (selectedStage == 'All' || stage == selectedStage);
+            final isSelectedStage =
+                (selectedStage == 'All' || stage == selectedStage);
 
             return isSelectedStatus && isSelectedStage;
-          }
-      ).toList() ?? List.empty();
-      ApiData<List<PhotosData>> filteredApiData = apiData.copyWithSuccess(
-        data: filteredData
-      );
+          }).toList() ??
+          List.empty();
+      ApiData<List<PhotosData>> filteredApiData =
+          apiData.copyWithSuccess(data: filteredData);
       print(
           "Result of captured photos = ${apiData.isSuccess} - ${apiData.error} - ${apiData.data?.length}");
       print(
@@ -165,8 +166,11 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
           itemBuilder: (context, index) {
             final photoData = photosDataList.elementAt(index);
             String photoDataUrl = photoData.fileUrl ?? '';
-            String healthStatus = photoData.metaData.healthStatus ?? 'Unlabeled';
-
+            String healthStatus =
+                photoData.metaData.healthStatus ?? 'Unlabeled';
+            String stage = photoData.metaData.growthStage ?? 'Unlabeled';
+            String camera = photoData.metaData.camera == null ? '' : 'Camera ${photoData.metaData.camera.toString()}';
+            String upperText = camera.isEmpty ? photoData.parseDateTime() : '${photoData.parseDateTime()}\n$camera';
             return InkWell(
               onTap: () {
                 appRouter.go('/dashboard/captured_photos/photo_details',
@@ -186,7 +190,8 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
                           return Center(
                             child: CircularProgressIndicator(
                               value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      (loadingProgress.expectedTotalBytes ?? 1)
                                   : null,
                             ),
                           );
@@ -202,16 +207,32 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
                         },
                       ),
                       Positioned(
-                        bottom: 10,
+                        top: 10,
                         left: 10,
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          color: semiBlackColor.withAlpha(80),
+                          child: Text(
+                            upperText,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 10,
+                        left: 10,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: healthStatus == 'Healthy'
                                 ? healthyTextColor.withAlpha(50)
                                 : healthStatus == 'Unhealthy'
-                                ? unhealthyTextColor.withAlpha(50)
-                                : Colors.black,
+                                    ? unhealthyTextColor.withAlpha(50)
+                                    : Colors.black,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -220,8 +241,27 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
                               color: healthStatus == 'Healthy'
                                   ? healthyTextColor
                                   : healthStatus == 'Unhealthy'
-                                  ? unhealthyTextColor
-                                  : semiBlackColor,
+                                      ? unhealthyTextColor
+                                      : semiBlackColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: healthyTextColor.withAlpha(50),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            stage,
+                            style: TextStyle(
+                              color: healthyTextColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -274,11 +314,11 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
                       children: [
                         const SizedBox(height: 10),
                         Text(
-                          'URL:',
+                          photoData.parseDateOnly(),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          photoData.fileUrl,
+                          photoData.parseTimeOnly(),
                           style: TextStyle(color: Colors.blueAccent),
                         ),
                         const SizedBox(height: 16),

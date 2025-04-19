@@ -108,7 +108,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   void scheduleNextRun(String deviceId) async {
 
-    final intervalMinutes = 30;
+    final intervalMinutes = 5;
 
     DateTime now = DateTime.now();
     int nextMinutes = ((now.minute ~/ intervalMinutes) + 1) * intervalMinutes;

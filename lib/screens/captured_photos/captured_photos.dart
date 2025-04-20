@@ -107,33 +107,6 @@ class _CapturedPhotosState extends ConsumerState<CapturedPhotos> {
                   width: 25,
                 ),
                 // Stages
-                SizedBox(
-                  width: 150,
-                  child: DropdownButton<String>(
-                    value: ref.watch(selectedStageProvider),
-                    onChanged: (String? newValue) {
-                      ref.read(selectedStageProvider.notifier).state = newValue;
-                    },
-                    items: [
-                      'All',
-                      'V6',
-                      'V7',
-                      'V8',
-                      'V9',
-                      'R1',
-                      'R2',
-                      'R3',
-                      'R4',
-                      'R5',
-                      'R6',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
               ],
       ),
       body: Padding(

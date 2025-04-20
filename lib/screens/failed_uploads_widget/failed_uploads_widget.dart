@@ -30,11 +30,8 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
   @override
   void initState() {
     failedUploadsProvider = FutureProvider((ref) async {
-      print("heyyy1");
       final failedUploads = await failedUploadService.getAllFailedUploads(
           widget.deviceId);
-      print("A${failedUploads.data?.length ?? '123'}");
-      print(failedUploads.error.toString());
       return failedUploads;
     });
     super.initState();
@@ -56,11 +53,6 @@ class _FailedUploadsWidgetState extends ConsumerState<FailedUploadsWidget> {
           return Column(
             children: [Text("You're all set!")],
           );
-        }
-        print('data ${failedUploads.length}');
-
-        for (var value in failedUploads) {
-          print('Value - ${value.dataType}');
         }
         final failedImages = failedUploads
             .where((element) => element.dataType == FailedUploadDataType.photo)
@@ -254,7 +246,6 @@ class _FailedUploadsList extends StatelessWidget {
               ...entry.value.map((data) {
                 // String imageUrl = '$url/${data.image ?? ''}';
                 String imageUrl = "$url/failed-uploads/uploads/${data.image ?? ''}";
-                print('imageUrl = $imageUrl');
                 return isImage
                     ? Image.network(imageUrl, width: MediaQuery.of(context).size.width / 2,)
                     : ListTile(

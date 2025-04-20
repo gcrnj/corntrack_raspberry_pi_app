@@ -27,10 +27,8 @@ class FailedUploadService {
     String? deviceId,
   ) async {
     try {
-      print("trying getAllFailedUploads");
       return failedUploadApi.getAllFailedUploads(deviceId);
     } catch (e) {
-      print("error in getAllFailedUploads");
       return ApiData.error(error: e.toString());
     }
   }

@@ -26,6 +26,8 @@ class PhotosData {
   // Factory constructor to create a PhotosData instance from JSON
   factory PhotosData.fromJson(Map<String, dynamic> json, String date) {
     String fileName = (json['file_name'] as String).split('.')[0];
+    final hasCamera = fileName.length > 8 ? fileName.substring(8, 9) == '-' : false;
+    if(hasCamera) fileName = fileName.substring(0, 8);
 
     List<String> timeParts = '$fileName-$date'.split('-');
 

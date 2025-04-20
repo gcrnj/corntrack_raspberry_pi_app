@@ -12,7 +12,7 @@ class RangeDatePicker extends StatefulWidget {
 
 class _RangeDatePickerState extends State<RangeDatePicker> {
   DateTime _startDate = DateTime.now()
-      .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+      .copyWith(day: 1, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
   DateTime _endDate = DateTime.now().copyWith(
       hour: 23, minute: 59, second: 59, millisecond: 999, microsecond: 999);
 

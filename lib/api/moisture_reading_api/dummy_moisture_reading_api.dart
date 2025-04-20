@@ -12,6 +12,7 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
     return ApiData.success(data: [
       MoistureReadingData(
           moisture1: 30,
+          humidity: 1,
           moisture2: 30,
           moisture3: 30,
           dateTime: DateTime(2025, 2, 27, 11, 0, 0),
@@ -19,6 +20,7 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
       MoistureReadingData(
           moisture1: 30,
           moisture2: 30,
+          humidity: 1,
           moisture3: 30,
           dateTime: DateTime(2025, 2, 27, 10, 0, 0),
           temperature: 33),
@@ -26,6 +28,7 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
           moisture1: 30,
           moisture2: 30,
           moisture3: 30,
+          humidity: 1,
           dateTime: DateTime(2025, 2, 27, 9, 0, 0),
           temperature: 315),
     ]);
@@ -55,11 +58,12 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
 
   @override
   Future<ApiData<List<MoistureReadingData>>> getSoilMoistureData(
-      DateTime start, DateTime end,
-      {required String deviceId,
-      required List<int> pots,
-      bool? waterDistributed,
-      }) async {
+    DateTime start,
+    DateTime end, {
+    required String deviceId,
+    required List<int> pots,
+    bool? waterDistributed,
+  }) async {
     return ApiData.success(
         data: [
       MoistureReadingData(
@@ -68,6 +72,7 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
         moisture3: 25,
         temperature: 25,
         dateTime: DateTime(2025, 2, 27, 9, 0, 0),
+        humidity: 1,
       ),
       MoistureReadingData(
         moisture1: 25,
@@ -75,6 +80,7 @@ class DummyMoistureReadingApi extends IMoistureReadingApi {
         moisture3: 25,
         temperature: 26,
         dateTime: DateTime(2025, 2, 27, 9, 0, 0),
+        humidity: 1,
       ),
     ].toList());
   }

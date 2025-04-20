@@ -19,8 +19,12 @@ class SoilMoistureReport extends ConsumerStatefulWidget {
 }
 
 class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
+
+  DateTime startDate = DateTime.now()
+      .copyWith(day: 1, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+  DateTime endDate = DateTime.now().copyWith(
+      hour: 23, minute: 59, second: 59, millisecond: 999, microsecond: 999);
+
   final moistureReadingService = MoistureReadingServiceFactory.create();
   late final FutureProvider<ApiData<List<MoistureReadingData>>>
       temperatureProvider;
@@ -156,7 +160,7 @@ class _SoilMoistureReportState extends ConsumerState<SoilMoistureReport> {
                                   child: Text(
                                     text,
                                     style: TextStyle(
-                                        fontSize: column == 0 || column == 3
+                                        fontSize: column == 0
                                             ? 20
                                             : null),
                                   ),

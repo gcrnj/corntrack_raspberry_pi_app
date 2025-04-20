@@ -1,4 +1,5 @@
 
+import 'package:corntrack_raspberry_pi_app/data/date_range.dart';
 import 'package:corntrack_raspberry_pi_app/data/graph_data.dart';
 
 import '../api/device_api/graphApi.dart';
@@ -15,7 +16,7 @@ class GraphService {
 
   GraphService(this.graphApi);
 
-  Future<ApiData<List<GraphData>>> getGraphData(String deviceId, List<String> moistureId) async {
-    return await graphApi.getGraphData(deviceId, moistureId);
+  Future<ApiData<List<GraphData>>> getGraphData(String deviceId, List<String> moistureId, DateRange? dateRange) async {
+    return await graphApi.getGraphData(deviceId, moistureId, dateRange);
   }
 }

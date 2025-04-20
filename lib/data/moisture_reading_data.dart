@@ -6,6 +6,7 @@ class MoistureReadingData {
   final double moisture3;
   final DateTime dateTime;
   final double temperature;
+  final double humidity;
 
   MoistureReadingData({
     required this.moisture1,
@@ -13,6 +14,7 @@ class MoistureReadingData {
     required this.moisture3,
     required this.dateTime,
     required this.temperature,
+    required this.humidity,
   });
 
   // Factory constructor for creating a new MoistureReadingData instance from a map.
@@ -23,6 +25,7 @@ class MoistureReadingData {
       moisture3: (json['moisture3'] as num).toDouble(),
       dateTime: DateTime.parse(json['time'] as String).toLocal(), // Convert to UTC
       temperature: (json['temperature'] as num).toDouble(),
+      humidity: (json['humidity'] ?? json['humiidity'] ?? json['humidiity'] as num).toDouble(),
     );
   }
 

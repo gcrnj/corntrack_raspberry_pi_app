@@ -21,8 +21,11 @@ class WaterDistributionReport extends ConsumerStatefulWidget {
 
 class _WaterDistributionReportState
     extends ConsumerState<WaterDistributionReport> {
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
+  DateTime startDate = DateTime.now().copyWith(
+      day: 1, hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+  DateTime endDate = DateTime.now().copyWith(
+      hour: 23, minute: 59, second: 59, millisecond: 999, microsecond: 999);
+
   final moistureReadingService = MoistureReadingServiceFactory.create();
   late FutureProvider<ApiData<List<MoistureReadingData>>>
       moistureReadingProvider;
@@ -95,7 +98,7 @@ class _WaterDistributionReportState
                         );
                       },
                       columns: [
-                        TableColumn(width: 200, freezePriority: 1),
+                        TableColumn(width: 200),
                         TableColumn(width: 200),
                         TableColumn(width: 200),
                         TableColumn(width: 200),
@@ -114,12 +117,14 @@ class _WaterDistributionReportState
                               (context, column) {
                                 String text = '';
                                 switch (column) {
+                                  // Colors.green.shade700
+                                  // Colors.deepOrangeAccent.shade700 - not
                                   case 0:
-                                    text = item.moisture1.toString();
+                                    return waterDistributedCell(item.moisture1);
                                   case 1:
-                                    text = item.moisture2.toString();
+                                    return waterDistributedCell(item.moisture2);
                                   case 2:
-                                    text = item.moisture3.toString();
+                                    return waterDistributedCell(item.moisture3);
                                   case 3:
                                     text = item.formattedDate();
                                   case 4:
@@ -169,5 +174,29 @@ class _WaterDistributionReportState
     this.startDate = startDate;
     this.endDate = endDate;
     ref.refresh(moistureReadingProvider);
+  }
+
+  Widget waterDistributedCell(double moisture) {
+    return Container(
+      margin: EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        borderRadius:
+        BorderRadius.circular(8.0),
+        color: moisture <= 4 &&
+            moisture > 2.7
+            ? Colors.green.shade700
+            : Colors.deepOrangeAccent.shade700,
+      ),
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(
+          moisture.toString(),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -108,7 +108,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   void scheduleNextRun(String deviceId) async {
 
-    final intervalMinutes = 5;
+    final intervalMinutes = 30;
 
     DateTime now = DateTime.now();
     int nextMinutes = ((now.minute ~/ intervalMinutes) + 1) * intervalMinutes;
@@ -269,7 +269,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ),
                             Expanded(
                               child: _buildClickableContainer(
-                                'Hourly Temperature',
+                                'Hourly Temperature and Humidity',
                                 onTap: () {
                                   appRouter.go('/dashboard/hourly_temperature',
                                       extra: selectedCornPots);

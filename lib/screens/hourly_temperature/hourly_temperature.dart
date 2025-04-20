@@ -22,6 +22,7 @@ class HourlyTemperature extends ConsumerStatefulWidget {
 
 class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
   DateTime startDate = DateTime.now().copyWith(
+    day: 1,
     hour: 0,
     minute: 0,
     second: 0,
@@ -37,21 +38,21 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
   );
   final moistureReadingService = MoistureReadingServiceFactory.create();
   late final FutureProvider<ApiData<List<MoistureReadingData>>>
-      temperatureProvider;
+  temperatureProvider;
 
   @override
   void initState() {
     final deviceDetails = ref.read(deviceDetailsProvider);
     temperatureProvider =
         FutureProvider<ApiData<List<MoistureReadingData>>>((ref) async {
-      print('Fetching Hourly Temperature from $startDate to $endDate');
-      return await moistureReadingService.getSoilMoistureData(
-        startDate,
-        endDate,
-        pots: widget.selectedPots,
-        deviceId: deviceDetails?.deviceId ?? '',
-      );
-    });
+          print('Fetching Hourly Temperature from $startDate to $endDate');
+          return await moistureReadingService.getSoilMoistureData(
+            startDate,
+            endDate,
+            pots: widget.selectedPots,
+            deviceId: deviceDetails?.deviceId ?? '',
+          );
+        });
     super.initState();
   }
 
@@ -61,7 +62,7 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hourly Temperature'),
+        title: Text('Hourly Temperature and Humidity'),
       ),
       body: Column(
         children: [
@@ -88,11 +89,12 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                           // Header background color
                           child: contentBuilder(
                             context,
-                            (context, column) {
+                                (context, column) {
                               const headers = {
                                 0: "Date",
                                 1: "Time",
                                 2: "Temperature (°C)",
+                                3: "Humidity",
                               };
 
                               return Align(
@@ -108,12 +110,10 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                         );
                       },
                       columns: [
-                        TableColumn(width: 200, freezePriority: 1),
-                        // Time Column
                         TableColumn(width: 200),
-                        // Temperature Column
                         TableColumn(width: 200),
-                        // Temperature Column
+                        TableColumn(width: 200),
+                        TableColumn(width: 200),
                       ],
                       rowCount: data.data!.length,
                       rowHeight: 56.0,
@@ -125,19 +125,45 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                             onTap: () => print('Row $row clicked'),
                             child: contentBuilder(
                               context,
-                              (context, column) {
+                                  (context, column) {
                                 String text = '';
+                                TextStyle style = TextStyle();
+                                Widget leading = SizedBox();
+                                MainAxisAlignment alignment = MainAxisAlignment.center;
                                 switch (column) {
                                   case 0:
                                     text = item.formattedDate();
                                   case 1:
                                     text = item.formattedTime();
                                   case 2:
-                                    text = item.temperature.toString();
+                                    final temp = item.temperature;
+                                    text = temp.toString();
+                                    style = TextStyle(
+                                      fontSize: 18,
+                                    );
+                                    leading = temp < 28 ? Icon(Icons.trending_down_rounded, color: Colors.blue,) : temp > 33 ? Icon(Icons.trending_up_rounded, color: Colors.red,) : Icon(Icons.thermostat_rounded, color: Colors.green,);
+                                    alignment = MainAxisAlignment.start;
+                                  case 3:
+                                    final humid = item.humidity;
+                                    text = humid.toString();
+                                    style = TextStyle(
+                                      fontSize: 18,
+                                    );
+                                    leading =  Icon(Icons.water_drop_rounded, color: humid < 50 ? Colors.grey : humid > 80 ? Colors.red : Colors.blue,);
+                                    alignment = MainAxisAlignment.center;
                                 }
                                 return Align(
                                   alignment: Alignment.center,
-                                  child: Text(text),
+                                  child: Row(
+                                    mainAxisAlignment: alignment,
+                                    children: [
+                                      leading,
+                                      Text(
+                                      text,
+                                      style: style,
+                                    ),
+                                    ],
+                                  ),
                                 );
                               },
                             ),
@@ -152,18 +178,20 @@ class _HourlyTemperatureState extends ConsumerState<HourlyTemperature> {
                     );
                   }
                 },
-                loading: () => Center(
-                  child: CircularProgressIndicator(),
-                ),
-                error: (error, stackTrace) => Center(
-                  child: errorWidget(
-                    error.toString(),
-                    onPressed: () {
-                      print(error.toString());
-                      _onDateSelected(startDate, endDate);
-                    },
-                  ),
-                ),
+                loading: () =>
+                    Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                error: (error, stackTrace) =>
+                    Center(
+                      child: errorWidget(
+                        error.toString(),
+                        onPressed: () {
+                          print(error.toString());
+                          _onDateSelected(startDate, endDate);
+                        },
+                      ),
+                    ),
               ),
             ),
           ),

@@ -56,7 +56,7 @@ enum Pots {
         return 'moisture1';
       case Pots.pot2:
         return 'moisture2';
-        case Pots.pot3:
+      case Pots.pot3:
         return 'moisture3';
     }
   }
@@ -107,8 +107,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void scheduleNextRun(String deviceId) async {
-
-    final intervalMinutes = 30;
+    final intervalMinutes = 5;
 
     DateTime now = DateTime.now();
     int nextMinutes = ((now.minute ~/ intervalMinutes) + 1) * intervalMinutes;
@@ -118,25 +117,35 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       now = now.add(Duration(hours: 1));
     }
 
-    DateTime nextRun = DateTime(now.year, now.month, now.day, now.hour, nextMinutes);
+    DateTime nextRun =
+        DateTime(now.year, now.month, now.day, now.hour, nextMinutes);
     Duration initialDelay = nextRun.difference(DateTime.now());
 
     print("Next scheduled run at: $nextRun");
 
     // Wait until the next 5-minute mark, then start periodic execution
     print('initialDelay $initialDelay');
-    Timer(initialDelay, () {
+    Timer(initialDelay, () async {
       print('=======  Schedule Run  ===========');
       print("1st! ${DateTime.now()}");
       print('=======  Schedule Run  ===========');
-      devicesServices.postMoistureData(deviceId);
       photosServices.postNewPhoto(deviceId);
+      final moisture = await devicesServices.postMoistureData(deviceId);
+      final ctx = context.mounted ? context : null;
+      if(ctx != null && ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              'New Data: $moisture',
+            ),
+          ),
+        );
+      }
 
       // Schedule periodic runs exactly at every 5-minute mark
       _timer = Timer.periodic(Duration(minutes: intervalMinutes), (timer) {
         DateTime now = DateTime.now();
         int minutes = now.minute;
-
 
         print(minutes);
         // Ensure it runs only at 5-minute marks
@@ -151,22 +160,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     });
   }
 
-
   void reloadDeviceDetails() async {
     var preDeviceId = ref.read(deviceDetailsProvider)?.deviceId ?? '';
-    if(preDeviceId == '') { // No deviceId
+    if (preDeviceId == '') {
+      // No deviceId
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final deviceId = prefs.getString(PrefKeys.deviceId.name) ?? '';
-      final deviceDetails = await deviceServices
-          .getDeviceDetails(deviceId);
+      final deviceDetails = await deviceServices.getDeviceDetails(deviceId);
       ref.read(deviceDetailsProvider.notifier).state = deviceDetails.data;
       preDeviceId = deviceDetails.data?.deviceId ?? '';
     }
     print('preDeviceId = ${preDeviceId}');
     print('Got deviceId = ${ref.read(deviceDetailsProvider)?.deviceId}');
-    scheduleNextRun(preDeviceId );
+    scheduleNextRun(preDeviceId);
   }
-
 
   void _updateDateTime() {
     DateTime now = DateTime.now();
@@ -175,6 +182,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       formattedTime = DateFormat("hh:mma").format(now).toLowerCase(); // 08:02am
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final selectedCornPots = ref.watch(selectedCornPotProvider);
@@ -309,7 +317,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               child: _buildClickableContainer(
                                 'Smart Farming Dashboard',
                                 onTap: () {
-                                  appRouter.go('/dashboard/smart-farming', extra: selectedCornPots);
+                                  appRouter.go('/dashboard/smart-farming',
+                                      extra: selectedCornPots);
                                 },
                                 margin: _padding8Right,
                                 padding: buttonsPadding,

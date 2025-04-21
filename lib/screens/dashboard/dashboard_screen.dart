@@ -376,6 +376,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                 ),
               ),
+
+              /*
               Expanded(
                 flex: 2,
                 child: Container(
@@ -411,6 +413,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                 ),
               ),
+               */
             ],
           ),
         ),
